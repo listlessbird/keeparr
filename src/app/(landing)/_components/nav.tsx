@@ -8,6 +8,7 @@ import { useClickOutside } from "@/hooks/useClickOutside"
 import { Logo } from "@/app/_components/logo"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { createPortal } from "react-dom"
 
 // TODO: Add a dark mode toggle here and a pointing arrow for the nav dropdown.
 
@@ -31,7 +32,7 @@ function LandingNavItems() {
       <li>
         <Link
           href="/login"
-          className="text-sm font-medium hover:underline underline-offset-4"
+          className="text-sm font-medium hover:underline underline-offset-4 transition-colors text-foreground/60 hover:text-foreground/80"
         >
           Login
         </Link>
@@ -39,7 +40,7 @@ function LandingNavItems() {
       <li>
         <Link
           href="#features"
-          className="text-sm font-medium hover:underline underline-offset-4"
+          className="text-sm font-medium hover:underline underline-offset-4 transition-colors text-foreground/60 hover:text-foreground/80"
         >
           Features
         </Link>
@@ -47,7 +48,7 @@ function LandingNavItems() {
       <li>
         <Link
           href="#about"
-          className="text-sm font-medium hover:underline underline-offset-4"
+          className="text-sm font-medium hover:underline underline-offset-4 transition-colors text-foreground/60 hover:text-foreground/80"
         >
           About
         </Link>
@@ -55,7 +56,7 @@ function LandingNavItems() {
       <li>
         <Link
           href="/contact"
-          className="text-sm font-medium hover:underline underline-offset-4"
+          className="text-sm font-medium hover:underline underline-offset-4 transition-colors text-foreground/60 hover:text-foreground/80"
         >
           Contact
         </Link>
@@ -90,15 +91,19 @@ function SMNav({ Items }: { Items: ReactElement }) {
           ></path>
         </svg>
       </Button>
-      <div
-        className={cn({
-          "w-0 overflow-x-hidden animate-in fade-in-5": !isOpen,
-          "p-4 bg-white dark:bg-black border border-black/40 rounded-md shadow-md min-w-fit w-[8vw] fixed right-[2%] top-[5%] before:w-[2rem] before:aspect-[2/1] before:border-b-2 before:border-l-2 before:border-r-2 before:bg-red-400 before:block":
-            isOpen,
-        })}
-      >
-        {Items}
-      </div>
+      {isOpen &&
+        createPortal(
+          <div
+            className={cn({
+              "w-0 overflow-x-hidden animate-in fade-in-5": !isOpen,
+              "p-4 bg-white dark:bg-black border border-black/40 rounded-md shadow-md min-w-fit w-[8vw] fixed right-[2%] top-[5%] before:w-[2rem] before:aspect-[2/1] before:border-b-2 before:border-l-2 before:border-r-2 before:bg-red-400 before:block":
+                isOpen,
+            })}
+          >
+            {Items}
+          </div>,
+          document.body,
+        )}
     </div>
   )
 }
