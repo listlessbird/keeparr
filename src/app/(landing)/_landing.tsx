@@ -3,7 +3,7 @@ import Typography from "@/components/ui/typography"
 
 export function Landing() {
   return (
-    <main className="container bg-white dark:bg-black dark:text-white text-black grid items-center h-full">
+    <main className="container dark:bg-black dark:text-white text-black grid items-center h-full">
       <section className="mx-auto w-fit space-y-2">
         <Typography variant="h1">KeepArr</Typography>
         <Typography variant="h2" affects="large">

@@ -99,3 +99,23 @@
     }
   }
 }
+
+.landing-root::before {
+  --size: 60px;
+  --line: hsl(var(--primary) / 0.5);
+
+  /* --line: red; */
+
+  content: "";
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, var(--line) 1px, transparent 1px var(--size)) 50% 50% /
+      var(--size) var(--size),
+    linear-gradient(var(--line) 1px, transparent 1px var(--size)) 50% 50% /
+      var(--size) var(--size);
+  mask: linear-gradient(-15deg, transparent 30%, white);
+  transform: translate3d(0, 0, -100vmin);
+}
