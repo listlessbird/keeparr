@@ -2,6 +2,9 @@ import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 
+import { ThemeProvider } from "@/components/theme-provider"
+
+import { HydrationOverlay } from "@builder.io/react-hydration-overlay"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
@@ -16,7 +19,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <ThemeProvider
+        attribute="class"
+        enableSystem
+        defaultTheme="system"
+        disableTransitionOnChange
+      >
+        <body className={inter.className}>
+          <HydrationOverlay>{children}</HydrationOverlay>
+        </body>
+      </ThemeProvider>
     </html>
   )
 }

@@ -1,16 +1,17 @@
 "use client"
 import Link from "next/link"
-
-import { useState, type ReactElement, useRef } from "react"
-
-import { useClickOutside } from "@/hooks/useClickOutside"
-
 import { Logo } from "@/app/_components/logo"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { createPortal } from "react-dom"
 
-// TODO: Add a dark mode toggle here and a pointing arrow for the nav dropdown.
+import { ModeToggle } from "./darkmode-toggle"
+import { ReactElement } from "react"
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function Navbar() {
   return (
@@ -21,7 +22,12 @@ export default function Navbar() {
           <span className="text-2xl font-bold text-brand_blue">KeepArr</span>
         </Link>
       </div>
-      <SMNav Items={<LandingNavItems />} />
+      <div>
+        <div className="fixed right-[8%] top-[2%]">
+          <ModeToggle />
+        </div>
+        <SMNav Items={<LandingNavItems />} />
+      </div>
     </nav>
   )
 }
@@ -66,44 +72,30 @@ function LandingNavItems() {
 }
 
 function SMNav({ Items }: { Items: ReactElement }) {
-  const [isOpen, setIsOpen] = useState(false)
-
-  const ref = useRef(null)
-  useClickOutside(ref, () => setIsOpen(false))
   return (
     // create an isloated stacking context here.
-    <div className="relative z-1" ref={ref}>
-      <Button
-        variant={"plain"}
-        size={"icon"}
-        onClick={() => setIsOpen(!isOpen)}
-        className="border border-black/40 aspect-square rounded-full hover:border-black/80 fixed right-[2%] top-[2%] z-10"
-      >
-        <svg
-          className="w-6 h-6 text-blue dark:text-blue fill-brand_blue"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            clipRule="evenodd"
-            d="M4 5a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm0 5a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm0 5a1 1 0 011-1h6a1 1 0 110 2H5a1 1 0 01-1-1z"
-            fillRule="evenodd"
-          ></path>
-        </svg>
-      </Button>
-      {isOpen &&
-        createPortal(
-          <div
-            className={cn({
-              "w-0 overflow-x-hidden animate-in fade-in-5": !isOpen,
-              "p-4 bg-white dark:bg-black border border-black/40 rounded-md shadow-md min-w-fit w-[8vw] fixed right-[2%] top-[5%] before:w-[2rem] before:aspect-[2/1] before:border-b-2 before:border-l-2 before:border-r-2 before:bg-red-400 before:block":
-                isOpen,
-            })}
-          >
-            {Items}
-          </div>,
-          document.body,
-        )}
-    </div>
+    <DropdownMenu>
+      <div className="relative">
+        <div className="flex fixed right-[2%] top-[2%] z-1">
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant={"plain"}
+              size={"icon"}
+              className="border border-black/40 aspect-square rounded-full hover:border-black/80 dark:border-white/40 dark:hover:border-white/80"
+            >
+              <svg className="w-6 h-6 " fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  clipRule="evenodd"
+                  d="M4 5a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm0 5a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm0 5a1 1 0 011-1h6a1 1 0 110 2H5a1 1 0 01-1-1z"
+                ></path>
+              </svg>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <div className="p-2">{Items}</div>
+          </DropdownMenuContent>
+        </div>
+      </div>
+    </DropdownMenu>
   )
 }
