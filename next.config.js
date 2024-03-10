@@ -9,6 +9,14 @@ const nextConfig = {
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/v1/:slug*",
+        destination: "http://localhost:3001/:slug*",
+      },
+    ]
+  },
 }
 
 module.exports = withHydrationOverlay({
