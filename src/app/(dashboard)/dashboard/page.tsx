@@ -7,12 +7,12 @@ import { UserIndicator } from "./user-indicator"
 
 export default async function Dashboard() {
   return (
-    <div className="lg:mt-10 mt-3">
-      <UserIndicator />
-      <Typography variant={"h1"}>
+    <div className="lg:mt-10 mt-3 p-4">
+      {/* <UserIndicator /> */}
+      <Typography variant={"h3"}>
         Welcome to your dashboard, what would you like to do?
       </Typography>
-      <div className=" grid lg:grid-cols-3 items-center justify-center justify-items-center">
+      <div className=" grid grid-cols-[minmax(50px,1fr)_minmax(20px,0.2fr)_minmax(50px,1fr)] items-center justify-evenly justify-items-center gap-y-[98px] min-h-[90dvh] content-center">
         <DashboardActionButton
           Icon={<Plus size={48} stroke="white" />}
           text={"Create something..."}
@@ -28,7 +28,7 @@ export default async function Dashboard() {
           text={"Add bookmark"}
           className="lg:w-[75%] lg:h-[75%] mt-auto"
         />
-        <Separator className="lg:col-span-3 lg:my-[71px]" />
+        <Separator className="lg:col-span-3 lg:my-[71px] h-full w-[1px] lg:h-[1px] lg:w-full col-start-2 row-start-1 row-span-3" />
         <DashboardActionButton
           Icon={<List size={48} stroke="white" />}
           text={"Add to reading list"}
