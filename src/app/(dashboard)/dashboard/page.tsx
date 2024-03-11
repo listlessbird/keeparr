@@ -3,10 +3,12 @@ import { Separator } from "@/components/ui/separator"
 import Typography from "@/components/ui/typography"
 import { getSession } from "@/lib/auth"
 import { Plus, NotebookPen, Bookmark, List, Brush } from "lucide-react"
+import { UserIndicator } from "./user-indicator"
 
 export default async function Dashboard() {
   return (
     <div className="lg:mt-10 mt-3">
+      <UserIndicator />
       <Typography variant={"h1"}>
         Welcome to your dashboard, what would you like to do?
       </Typography>

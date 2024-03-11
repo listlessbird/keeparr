@@ -1,7 +1,7 @@
 import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-
+import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from "@/components/theme-provider"
 
 // import { HydrationOverlay } from "@builder.io/react-hydration-overlay"
@@ -29,6 +29,7 @@ export default function RootLayout({
         >
           {/* <HydrationOverlay>{children}</HydrationOverlay> */}
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

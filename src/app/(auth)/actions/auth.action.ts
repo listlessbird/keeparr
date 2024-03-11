@@ -92,3 +92,5 @@ export async function auth(prevState: any, formData: FormData) {
     redirect("/dashboard")
   }
 }
+
+export async function logout() {}
