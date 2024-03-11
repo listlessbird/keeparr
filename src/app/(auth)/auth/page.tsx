@@ -1,5 +1,5 @@
 "use client"
-import { auth } from "@/app/actions/auth.action"
+import { auth } from "@/app/(auth)/actions/auth.action"
 import { useFormState, useFormStatus } from "react-dom"
 import { Button } from "@/components/ui/button"
 
@@ -46,10 +46,25 @@ export default function Auth() {
                 name="password"
                 placeholder="Password"
                 className="p-2 border border-foreground/60 rounded-md"
+                autoComplete="current-password"
               />
             </div>
             <SubmitButton />
           </form>
+          <div>
+            <Button
+              onClick={async (e) => {
+                e.preventDefault()
+
+                const res = await fetch("/api/v1/auth")
+                const data = await res.json()
+
+                console.log({ data })
+              }}
+            >
+              Make a request
+            </Button>
+          </div>
           <div>
             <pre>{JSON.stringify(state, null, 2)}</pre>
           </div>
