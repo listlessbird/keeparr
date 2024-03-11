@@ -20,8 +20,8 @@ bun dev
 ### Auth
 
 - [ ] As a user, I want to be able to create an account
-- [ x ] As a user, I want to be able to login
-- [ x ] As a user, I want to be able to logout
+- [x] As a user, I want to be able to login
+- [x] As a user, I want to be able to logout
 - [ ] As a user, I would like to be able to use github to login
 - [ ] As a user, I would like to be able to use google to login
 
