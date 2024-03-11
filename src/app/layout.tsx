@@ -1,10 +1,10 @@
 import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
-
+import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from "@/components/theme-provider"
 
-import { HydrationOverlay } from "@builder.io/react-hydration-overlay"
+// import { HydrationOverlay } from "@builder.io/react-hydration-overlay"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
@@ -18,17 +18,20 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <ThemeProvider
-        attribute="class"
-        enableSystem
-        defaultTheme="system"
-        disableTransitionOnChange
-      >
-        <body className={inter.className}>
-          <HydrationOverlay>{children}</HydrationOverlay>
-        </body>
-      </ThemeProvider>
+    <html lang="en" suppressHydrationWarning>
+      <head />
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {/* <HydrationOverlay>{children}</HydrationOverlay> */}
+          {children}
+          <Toaster />
+        </ThemeProvider>
+      </body>
     </html>
   )
 }

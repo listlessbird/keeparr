@@ -37,7 +37,7 @@ function LandingNavItems() {
     <ul className="flex gap-2 flex-col">
       <li>
         <Link
-          href="/login"
+          href="/auth"
           className="text-sm font-medium hover:underline underline-offset-4 transition-colors text-foreground/60 hover:text-foreground/80"
         >
           Login
