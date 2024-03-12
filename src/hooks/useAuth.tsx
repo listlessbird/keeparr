@@ -144,7 +144,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       dispatch({ type: AuthActionTypes.LOGOUT })
 
       startTransiton(() => {
-        router.replace("/auth")
+        router.refresh()
       })
     }
   }
