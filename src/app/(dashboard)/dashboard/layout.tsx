@@ -8,7 +8,9 @@ export default function DashboardLayout({
 }) {
   return (
     <DashboardProviders>
-      <MaxWidthWrapper className="min-h-dvh">{children}</MaxWidthWrapper>)
+      <MaxWidthWrapper className="min-h-dvh lg:min-h-screen">
+        {children}
+      </MaxWidthWrapper>
     </DashboardProviders>
   )
 }
