@@ -18,7 +18,7 @@ export function DashboardActionButton({
       <div className="flex flex-col items-center justify-center gap-0">
         {Icon}
         <span
-          className="hidden sm:block invisible group-hover:visible group-focus:visible transition-[visible] text-white"
+          className="hidden sm:block invisible group-hover:visible group-focus-within:visible transition-[visible] text-white"
           aria-hidden
         >
           {text}
