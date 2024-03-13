@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+
 import { getSession } from "@/lib/auth"
 
 export async function middleware(request: NextRequest) {
@@ -22,5 +23,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!register|api|_next/static|_next/image).*)"],
+  matcher: ["/((?!register|api|_next/static|_next/image|$).*)"],
 }
