@@ -82,6 +82,7 @@ function SMNav({ Items }: { Items: ReactElement }) {
             <Button
               variant={"plain"}
               size={"icon"}
+              data-testid="nav-menu"
               className="aspect-square rounded-full border border-black/40 hover:border-black/80 dark:border-white/40 dark:hover:border-white/80"
             >
               <svg className="size-6 " fill="currentColor" viewBox="0 0 20 20">
