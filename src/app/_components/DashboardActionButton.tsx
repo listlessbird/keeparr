@@ -1,30 +1,38 @@
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
 import { ReactNode } from "react"
+import Link from "next/link"
+
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 
 export function DashboardActionButton({
   Icon,
   text,
+  href,
   ...props
-}: { Icon: ReactNode; text: ReactNode } & React.ComponentProps<typeof Button>) {
+}: { Icon: ReactNode; text: ReactNode; href?: string } & React.ComponentProps<
+  typeof Button
+>) {
   return (
     <Button
       {...props}
       className={cn(
-        "lg:max-w-[250px] lg:aspect-square lg:h-[250px] group max-w-[157px] aspect-square min-h-[100px] rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out cursor-pointer px-0 py-0 min-w-[50px] w-full h-full",
+        "group aspect-square size-full min-h-[100px] min-w-[50px] max-w-[157px] cursor-pointer rounded-2xl p-0 shadow-lg transition-shadow duration-300 ease-in-out hover:shadow-xl lg:aspect-square lg:h-[250px] lg:max-w-[250px]",
         props.className,
       )}
+      asChild
     >
-      <div className="flex flex-col items-center justify-center gap-0">
-        {Icon}
-        <span
-          className="hidden sm:block invisible group-hover:visible group-focus-within:visible transition-[visible] text-white"
-          aria-hidden
-        >
-          {text}
-        </span>
-        <span className="sr-only">{text}</span>
-      </div>
+      <Link href={href ?? "/dashboard"}>
+        <div className="flex flex-col items-center justify-center gap-0">
+          {Icon}
+          <span
+            className="invisible hidden text-white transition-[visible] group-focus-within:visible group-hover:visible sm:block"
+            aria-hidden
+          >
+            {text}
+          </span>
+          <span className="sr-only">{text}</span>
+        </div>
+      </Link>
     </Button>
   )
 }
