@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/button"
+import { Tree } from "@/components/tree"
 import { UserAvatar } from "@/app/_components/user-avatar"
 
 import { useNotesLayoutState } from "../notes/providers"
@@ -46,6 +47,9 @@ export function NotesSidebar() {
             <p className="line-clamp-1 text-lg font-bold">{user?.username}</p>
             <p className="line-clamp-1 text-xs text-gray-400">{user?.email}</p>
           </div>
+        </div>
+        <div className="self-center">
+          <Tree />
         </div>
       </div>
     </div>
