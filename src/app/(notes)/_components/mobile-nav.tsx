@@ -1,21 +1,38 @@
-import { Dispatch, MutableRefObject, SetStateAction } from "react"
+import { useEffect } from "react"
 import { Menu } from "lucide-react"
 
+import { useMediaQuery } from "@/hooks/use-media-query"
 import { Button } from "@/components/ui/button"
 import { Iconify } from "@/components/iconify"
 
-export function NotesMobileNav({
-  expander,
-}: {
-  expander: Dispatch<SetStateAction<boolean>>
-}) {
+import { useNotesLayoutState } from "../notes/providers"
+
+export function NotesMobileNav({}: {}) {
+  const { isMobile } = useMediaQuery()
+
+  const { isExpanded, setIsExpanded } = useNotesLayoutState()
+
+  useEffect(
+    function collapseNavIfMobile() {
+      if (isMobile) {
+        setIsExpanded(false)
+      } else {
+        setIsExpanded(true)
+      }
+    },
+    [isMobile, setIsExpanded],
+  )
+
   return (
-    <>
+    <header
+      className="h-[39px] w-full max-w-[100vw] lg:h-[50px]"
+      data-expanded={isExpanded}
+    >
       <nav className=" flex w-full justify-between bg-[#f0f0f5] p-2 shadow-sm md:p-4">
         <Button
           // asChild
           onClick={() => {
-            expander((prev) => !prev)
+            setIsExpanded((prev) => !prev)
           }}
           variant={"icon"}
           size={"icon"}
@@ -30,6 +47,6 @@ export function NotesMobileNav({
           />
         </div>
       </nav>
-    </>
+    </header>
   )
 }

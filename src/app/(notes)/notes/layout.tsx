@@ -1,15 +1,19 @@
-import React from "react"
-
+import { NotesLayout as Wrapper } from "../_components/notes-layout"
 import { NotesProvider } from "./providers"
 
 export default function NotesLayout({
   children,
+  sidebar,
 }: {
   children: React.ReactNode
+  sidebar: React.ReactNode
 }) {
   return (
     <NotesProvider>
-      <div className="h-full bg-[#f0f0f5] text-black">{children}</div>
+      <Wrapper>
+        {sidebar}
+        {children}
+      </Wrapper>
     </NotesProvider>
   )
 }

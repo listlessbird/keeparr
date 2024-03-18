@@ -1,38 +1,38 @@
-import { Dispatch, SetStateAction } from "react"
+"use client"
+
+import { Dispatch, SetStateAction, useState } from "react"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useAuth } from "@/hooks/useAuth"
-import { Avatar } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { UIAvatar } from "@/components/ui-avatar"
 import { UserAvatar } from "@/app/_components/user-avatar"
 
-export function NotesSidebar({
-  expander,
-  expanded,
-}: {
-  expander: Dispatch<SetStateAction<boolean>>
-  expanded: boolean
-}) {
+import { useNotesLayoutState } from "../notes/providers"
+
+export function NotesSidebar() {
   const { isMobile } = useMediaQuery()
 
   const { user } = useAuth()
 
+  const { isExpanded, setIsExpanded } = useNotesLayoutState()
+
   return (
     <div
       className={cn(
-        `relative z-[9999] size-full min-h-screen overflow-hidden bg-[#d9d9d9] shadow-md`,
-        expanded ? "w-full" : "invisible",
+        `notes-sidebar-wrapper relative z-[9999] size-full min-h-screen overflow-hidden bg-[#d9d9d9] shadow-md`,
+        isExpanded ? "w-full" : "invisible",
       )}
     >
-      {isMobile && expanded && (
+      {isMobile && isExpanded && (
         <div className="fixed right-2 top-2">
           <Button
             variant={"icon"}
             onClick={() => {
-              expander((prev) => !prev)
+              setTimeout(() => {
+                setIsExpanded((prev) => !prev)
+              }, 100)
             }}
           >
             <X size={24} />
