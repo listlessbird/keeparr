@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
 
-import { NotesMobileNav } from "../_components/mobile-nav"
+import { NotesNav } from "../_components/nav"
 
 const Playground = dynamic(
   () => import("../_components/note-playground").then((d) => d.NotePlayGround),
@@ -16,11 +16,8 @@ const Playground = dynamic(
 export default function NotesPage() {
   return (
     <div>
-      <NotesMobileNav />
-      <div>
-        <div className="overflow-x-hidden py-[39px] lg:pt-[50px]">
-          <Playground />
-        </div>
+      <div className="overflow-x-hidden py-[39px] lg:pt-[50px]">
+        <Playground />
       </div>
     </div>
   )

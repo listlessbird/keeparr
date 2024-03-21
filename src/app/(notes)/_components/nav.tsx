@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect } from "react"
 import { Menu } from "lucide-react"
 
@@ -7,7 +9,7 @@ import { Iconify } from "@/components/iconify"
 
 import { useNotesLayoutState } from "../notes/providers"
 
-export function NotesMobileNav({}: {}) {
+export function NotesNav({}: {}) {
   const { isMobile } = useMediaQuery()
 
   const { isExpanded, setIsExpanded } = useNotesLayoutState()
