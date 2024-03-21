@@ -1,8 +1,10 @@
 "use client"
 
-import { UIAvatar } from "@/components/ui-avatar"
-import Typography from "@/components/ui/typography"
+import { useMemo } from "react"
+
+import { getInitials } from "@/lib/utils"
 import { useAuth } from "@/hooks/useAuth"
+import { Avatar } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,9 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useMemo } from "react"
-import { getInitials } from "@/lib/utils"
-import { Avatar } from "@/components/ui/avatar"
+import Typography from "@/components/ui/typography"
+import { UIAvatar } from "@/components/ui-avatar"
 
 export function UserIndicator({ indicatorColor }: { indicatorColor: string }) {
   const { user, logout } = useAuth()
@@ -23,7 +24,7 @@ export function UserIndicator({ indicatorColor }: { indicatorColor: string }) {
   )
 
   return (
-    <div className="absolute top-4 right-4">
+    <div className="absolute right-4 top-4">
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Avatar asChild>
@@ -38,13 +39,13 @@ export function UserIndicator({ indicatorColor }: { indicatorColor: string }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <div className="flex items-center justify-start p-2">
-            <div className="flex flex-col leading-none space-y-1">
+            <div className="flex flex-col space-y-1 leading-none">
               <Typography variant="p" className="text-base">
                 {user?.username}
               </Typography>
               <Typography
                 variant="p"
-                className="text-xs text-muted-foreground truncate"
+                className="truncate text-xs text-muted-foreground"
               >
                 {user?.email}
               </Typography>
@@ -71,10 +72,10 @@ export function WelcomeMessage() {
 
   return (
     <>
-      <Typography variant={"h3"} className="text-center w-fit">
+      <Typography variant={"h3"} className="w-fit text-center">
         Welcome to your dashboard {user?.username},
       </Typography>
-      <Typography variant={"h4"} className="text-center w-fit">
+      <Typography variant={"h4"} className="w-fit text-center">
         What would you like to do today?
       </Typography>
     </>

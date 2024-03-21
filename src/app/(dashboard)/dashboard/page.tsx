@@ -1,10 +1,12 @@
-import { DashboardActionButton } from "@/app/_components/DashboardActionButton"
+import { Bookmark, Brush, List, NotebookPen, Plus } from "lucide-react"
+
+import { getSession } from "@/lib/auth"
+import { getRandomDark } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
 import Typography from "@/components/ui/typography"
-import { getSession } from "@/lib/auth"
-import { Plus, NotebookPen, Bookmark, List, Brush } from "lucide-react"
+import { DashboardActionButton } from "@/app/_components/DashboardActionButton"
+
 import { UserIndicator, WelcomeMessage } from "./user-indicator"
-import { getRandomDark } from "@/lib/utils"
 
 export default async function Dashboard() {
   // TODO: Make this stable across a session.
@@ -14,10 +16,10 @@ export default async function Dashboard() {
   return (
     <div className="relative">
       <UserIndicator indicatorColor={`${UserIndicatorColor}`} />
-      <div className="lg:mt-10 mt-3 p-4 space-y-4">
+      <div className="mt-3 space-y-4 p-4 lg:mt-10">
         <WelcomeMessage />
 
-        <div className=" grid grid-cols-[minmax(50px,1fr)_minmax(20px,0.2fr)_minmax(50px,1fr)] items-center justify-evenly justify-items-center gap-y-[98px] min-h-[90dvh] content-center lg:grid-cols-3 lg:min-h-[unset] lg:gap-y-0 lg:justify-items-start">
+        <div className=" grid min-h-[90dvh] grid-cols-[minmax(50px,1fr)_minmax(20px,0.2fr)_minmax(50px,1fr)] content-center items-center justify-evenly justify-items-center gap-y-[98px] lg:min-h-[unset] lg:grid-cols-3 lg:justify-items-start lg:gap-y-0">
           <DashboardActionButton
             Icon={<Plus size={48} stroke="white" />}
             text={"Create something..."}
@@ -26,23 +28,24 @@ export default async function Dashboard() {
           <DashboardActionButton
             Icon={<NotebookPen size={48} stroke="white" />}
             text={"Document"}
-            className="lg:w-[75%] lg:h-[75%] mt-auto"
+            className="mt-auto lg:size-3/4"
+            href="/notes"
           />
           <DashboardActionButton
             Icon={<Bookmark size={48} stroke="white" />}
             text={"Add bookmark"}
-            className="lg:w-[75%] lg:h-[75%] mt-auto"
+            className="mt-auto lg:size-3/4"
           />
-          <Separator className="lg:col-span-3 lg:my-[71px] h-full w-[1px] lg:h-[1px] lg:w-full col-start-2 row-start-1 row-span-3 lg:row-span-[auto] lg:row-auto" />
+          <Separator className="lg:row-span-[auto] col-start-2 row-span-3 row-start-1 h-full w-px lg:col-span-3 lg:row-auto lg:my-[71px] lg:h-px lg:w-full" />
           <DashboardActionButton
             Icon={<List size={48} stroke="white" />}
             text={"Add to reading list"}
-            className="lg:w-[75%] lg:mt-auto lg:h-[75%] "
+            className="lg:mt-auto lg:size-3/4 "
           />
           <DashboardActionButton
             Icon={<Brush size={48} stroke="white" />}
             text={"Canvas"}
-            className="lg:w-[75%] mt-auto lg:h-[75%] "
+            className="mt-auto lg:size-3/4 "
           />
         </div>
       </div>
