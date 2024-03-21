@@ -1,9 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
-
-import { NotesNav } from "../_components/nav"
 
 const Playground = dynamic(
   () => import("../_components/note-playground").then((d) => d.NotePlayGround),

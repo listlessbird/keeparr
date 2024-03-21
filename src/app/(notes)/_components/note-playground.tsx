@@ -5,6 +5,8 @@ import { BlockNoteView, useCreateBlockNote, type Theme } from "@blocknote/react"
 import "@blocknote/core/fonts/inter.css"
 import "@blocknote/react/style.css"
 
+import { Block, BlockSchemaFromSpecs, BlockSpecs } from "@blocknote/core"
+
 const playGroundTheme = {
   colors: {
     editor: {
@@ -14,8 +16,11 @@ const playGroundTheme = {
   },
 } satisfies Theme
 
-export function NotePlayGround() {
-  const editor = useCreateBlockNote()
+type NotesPlayGroundProps = {
+  initialContent?: Block[]
+}
+export function NotePlayGround({ initialContent }: NotesPlayGroundProps) {
+  const editor = useCreateBlockNote({ initialContent })
 
   return (
     <div className="grid min-h-full grid-cols-[minmax(0,30px)_1fr_minmax(0,30px)]">

@@ -57,7 +57,7 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
 // TODO: Maybe change this to use a global store instead of context
 
 interface NotesContextType {
-  notes: Note[]
+  notes: Map<string, Note>
 }
 
 const NotesContext = createContext<NotesContextType>({} as NotesContextType)
@@ -72,21 +72,25 @@ export function useNotes() {
   return ctx
 }
 
+type NotesResponse = { [key: string]: Note }
+
 enum NotesActionTypes {
   ADD_NOTE = "ADD_NOTE",
   SET_NOTES = "SET_NOTES",
 }
 
+type NoteAddPayload = { id: string; note: Note }
+
 type NotesActions =
-  | { type: NotesActionTypes.ADD_NOTE; payload: Note }
-  | { type: NotesActionTypes.SET_NOTES; payload: Note[] }
+  | { type: NotesActionTypes.ADD_NOTE; payload: NoteAddPayload }
+  | { type: NotesActionTypes.SET_NOTES; payload: NotesResponse }
 
 type NotesState = {
-  notes: Note[]
+  notes: Map<string, Note>
 }
 
 const initialNotesState: NotesState = {
-  notes: [],
+  notes: new Map<string, Note>(),
 }
 
 function notesReducer<S extends NotesState, A extends NotesActions>(
@@ -95,10 +99,14 @@ function notesReducer<S extends NotesState, A extends NotesActions>(
 ): S {
   switch (action.type) {
     case "ADD_NOTE":
-      return { ...state, notes: [...state.notes, action.payload] }
+      return {
+        ...state,
+        notes: state.notes.set(action.payload.id, action.payload.note),
+      }
 
-    case "SET_NOTES":
-      return { ...state, notes: action.payload }
+    case "SET_NOTES": {
+      return { ...state, notes: new Map(Object.entries(action.payload)) }
+    }
 
     default:
       return state
@@ -113,10 +121,7 @@ export function NotesStateProvider({
   children: React.ReactNode
 }) {
   const [state, dispatch] = useReducer(notesReducer, initialNotesState)
-  const { data } = useSwr<Note[]>(
-    process.env.NEXT_PUBLIC_MOCK_API_URL as string,
-    fetcher,
-  )
+  const { data } = useSwr<NotesResponse>("/api/v1/notes", fetcher)
   useEffect(() => {
     if (data) {
       dispatch({ type: NotesActionTypes.SET_NOTES, payload: data })

@@ -12,8 +12,10 @@ export default function Sidebar() {
     <aside className="w-full overflow-hidden">
       <NotesSidebar>
         <Tree>
-          {notes?.map((item) => {
+          {Array.from(notes).map((noteItem) => {
+            const [id, item] = noteItem
             item["children"] = []
+            console.log({ item })
             return (
               <TreeNode
                 key={item.id}
