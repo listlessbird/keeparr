@@ -12,7 +12,7 @@ import { UserAvatar } from "@/app/_components/user-avatar"
 
 import { useNotesLayoutState } from "../notes/providers"
 
-export function NotesSidebar() {
+export function NotesSidebar({ children }: { children: React.ReactNode }) {
   const { isMobile } = useMediaQuery()
 
   const { user } = useAuth()
@@ -48,9 +48,7 @@ export function NotesSidebar() {
             <p className="line-clamp-1 text-xs text-gray-400">{user?.email}</p>
           </div>
         </div>
-        <div className="self-center">
-          <Tree />
-        </div>
+        <div className="mt-2 self-start p-2">{children}</div>
       </div>
     </div>
   )
