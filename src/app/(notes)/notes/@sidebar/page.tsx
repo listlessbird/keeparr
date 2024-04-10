@@ -1,5 +1,7 @@
 "use client"
 
+import Link from "next/link"
+
 import { Tree, TreeNode } from "@/components/tree"
 import { NotesSidebar } from "@/app/(notes)/_components/sidebar"
 
@@ -21,7 +23,9 @@ export default function Sidebar() {
                 key={item.id}
                 item={item}
                 renderSubTree={(item) => (
-                  <TreeNode item={item}>{item.name}</TreeNode>
+                  <Link href={`/notes/${item.id}`} passHref>
+                    <TreeNode item={item}>{item.name}</TreeNode>
+                  </Link>
                 )}
               >
                 <div className="p-2">{item.name}</div>

@@ -72,7 +72,13 @@ export function useNotes() {
   return ctx
 }
 
-type NotesResponse = { [key: string]: Note }
+type NotesResponse = {
+  [key: string]: {
+    id: string
+    name: string
+    blocks: any[]
+  }
+}
 
 enum NotesActionTypes {
   ADD_NOTE = "ADD_NOTE",

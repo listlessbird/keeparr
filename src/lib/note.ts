@@ -3,20 +3,20 @@ import type { Block } from "@blocknote/core"
 export class Note {
   id: string
   name: string
-  content: Block[] = []
+  blocks: Block[] = []
 
   constructor(id: string, name: string) {
     this.id = id
     this.name = name
-    this.content = []
+    this.blocks = []
   }
 
   set contents(content: Block[]) {
-    this.content = content
+    this.blocks = content
   }
 
   get contents() {
-    return this.content
+    return this.blocks
   }
 
   set docName(name: string) {
@@ -24,7 +24,7 @@ export class Note {
   }
 
   getBlockLength() {
-    return this.content.length
+    return this.blocks.length
   }
 }
 
