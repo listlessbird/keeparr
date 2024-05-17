@@ -18,12 +18,16 @@ export type TreeViewContext = {
   open: TreeViewState
   openNode: (id: string) => void
   closeNode: (id: string) => void
+  selectedId: string | null
+  selectId: (id: string) => void
 }
 
 export const TreeViewContext = createContext<TreeViewContext>({
   open: new Map<string, boolean>(),
   openNode: (id: string) => {},
   closeNode: (id: string) => {},
+  selectedId: null,
+  selectId: (id: string) => {},
 })
 
 enum TreeViewActionTypes {
@@ -52,7 +56,15 @@ function treeReducer(state: TreeViewState, action: TreeViewReducerAction) {
   }
 }
 
-function TreeViewProvider({ children }: { children: ReactNode }) {
+function TreeViewProvider({
+  children,
+  selectedId,
+  selectId,
+}: {
+  children: ReactNode
+  selectedId: string | null
+  selectId: (id: string | null) => void
+}) {
   const [open, dispatch] = useReducer(treeReducer, new Map<string, boolean>())
 
   const openNode = (id: string) => {
@@ -64,7 +76,9 @@ function TreeViewProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <TreeViewContext.Provider value={{ open, openNode, closeNode }}>
+    <TreeViewContext.Provider
+      value={{ open, openNode, closeNode, selectId, selectedId }}
+    >
       {children}
     </TreeViewContext.Provider>
   )
@@ -86,12 +100,17 @@ export type TreeNodeType = {
 
 export type RootProps = {
   children: ReactNode | ReactNode[]
+  value: string | null
+  onSelectChange: (value: string | null) => void
 } & React.ComponentProps<"ul">
 
-export function Root({ children, ...props }: RootProps) {
+export function Root({ children, value, onSelectChange, ...props }: RootProps) {
   return (
-    <TreeViewProvider>
-      <ul className={cn("flex flex-col overflow-auto", props.className)}>
+    <TreeViewProvider selectId={onSelectChange} selectedId={value}>
+      <ul
+        className={cn("flex flex-col overflow-auto", props.className)}
+        {...props}
+      >
         {children}
       </ul>
     </TreeViewProvider>
@@ -103,7 +122,7 @@ type NodeProps = {
 } & React.ComponentProps<"li">
 
 export function Node({ node: { name, children, id }, ...props }: NodeProps) {
-  const { open, openNode, closeNode } = useTreeView()
+  const { open, openNode, closeNode, selectId, selectedId } = useTreeView()
   const isOpen = open.get(id)
   const handleClick = () => {
     if (isOpen) {
@@ -111,6 +130,7 @@ export function Node({ node: { name, children, id }, ...props }: NodeProps) {
     } else {
       openNode(id)
     }
+    if (id) selectId(id)
   }
 
   return (
@@ -119,9 +139,16 @@ export function Node({ node: { name, children, id }, ...props }: NodeProps) {
         "flex cursor-pointer select-none flex-col",
         props.className,
       )}
+      {...props}
     >
       <div
-        className="flex items-center space-x-2 rounded-sm px-1 font-mono font-medium"
+        className={cn(
+          "flex items-center space-x-2 rounded-sm px-1 font-mono font-medium",
+          {
+            "bg-slate-300": selectedId === id,
+            "hover:bg-slate-200": selectedId !== id,
+          },
+        )}
         onClick={handleClick}
       >
         {children?.length ? (
