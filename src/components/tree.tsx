@@ -3,12 +3,12 @@ TODO:
   - Add expand all and collapse all buttons
   - Add search functionality
   - Add drag and drop functionality
-  - Add keyboard navigation
   - Add right click context menu
   - Add double click to edit
 */
 import React, { createContext, ReactNode, useContext, useReducer } from "react"
 import { ChevronRightIcon } from "@radix-ui/react-icons"
+import { AnimatePresence, motion, MotionConfig } from "framer-motion"
 import isHotkey from "is-hotkey"
 
 import { cn } from "@/lib/utils"
@@ -208,91 +208,80 @@ export function Node({ node: { name, children, id }, ...props }: NodeProps) {
       // className={}
       // {...props}
     >
-      <div
-        className={cn(
-          "flex items-center space-x-2 rounded-sm border-[1.5px] border-transparent px-1 font-mono font-medium",
-          {
-            "bg-slate-300": selectedId === id,
-            "hover:bg-slate-200": selectedId !== id,
-          },
-          isFocusable && "group-focus:border-slate-500",
-        )}
-        onClick={handleClick}
+      <MotionConfig
+        transition={{
+          ease: [0.164, 0.84, 0.43, 1],
+          duration: 0.25,
+        }}
       >
-        {children?.length ? (
-          <ChevronRightIcon
-            className={cn(
-              "size-4 origin-center transition-transform duration-200",
-              isOpen ? "rotate-90" : "rotate-0",
-            )}
-          />
-        ) : (
-          <span className="size-4 shrink-0" />
-        )}
-        <span className="truncate">{name}</span>
-      </div>
-      {children?.length && isOpen && (
-        <ul className="pl-4" role="group">
-          {children.map((node) => (
-            <Node node={node} key={node.id} />
-          ))}
-        </ul>
-      )}
+        <div
+          className={cn(
+            "flex items-center space-x-2 rounded-sm border-[1.5px] border-transparent px-1 font-mono font-medium",
+            {
+              "bg-slate-300": selectedId === id,
+              "hover:bg-slate-200": selectedId !== id,
+            },
+            isFocusable && "group-focus:border-slate-500",
+          )}
+          onClick={handleClick}
+        >
+          {children?.length ? (
+            <ChevronRightIcon
+              className={cn(
+                "size-4 origin-center transition-transform duration-200",
+                isOpen ? "rotate-90" : "rotate-0",
+              )}
+            />
+          ) : (
+            <span className="size-4 shrink-0" />
+          )}
+          <span className="truncate">{name}</span>
+        </div>
+        <AnimatePresence>
+          {children?.length && isOpen && (
+            <motion.ul
+              className="relative pl-4"
+              role="group"
+              key={"ul"}
+              initial={{
+                height: "0",
+                opacity: "0",
+              }}
+              animate={{
+                height: "auto",
+                opacity: 1,
+                transition: {
+                  height: {
+                    duration: 0.25,
+                  },
+                  opacity: {
+                    duration: 0.2,
+                    delay: 0.05,
+                  },
+                },
+              }}
+              exit={{
+                height: 0,
+                opacity: 0,
+                transition: {
+                  height: {
+                    duration: 0.25,
+                  },
+                  opacity: {
+                    duration: 0.2,
+                  },
+                },
+              }}
+            >
+              {children.map((node) => (
+                <Node node={node} key={node.id} />
+              ))}
+            </motion.ul>
+          )}
+        </AnimatePresence>
+      </MotionConfig>
     </li>
   )
 }
 
 export const TreeView = { Root, Node }
-
-// function Tree({ children }: { children: React.ReactNode }) {
-//   return (
-//     <ul className="tree ml-[calc(var(--radius)-var(--spacing))] pl-0">
-//       {children}
-//     </ul>
-//   )
-// }
-
-// interface TreeNodeType<T extends TreeItem<T>>
-//   extends React.ComponentPropsWithoutRef<"li"> {
-//   item: T
-//   renderSubTree?: (item: T) => React.ReactNode
-// }
-
-// function TreeNode<T extends TreeItem<T>>({
-//   item,
-//   renderSubTree,
-//   ...props
-// }: TreeNodeType<T>) {
-//   // const hasChildren = item.children.length > 0
-
-//   return (
-//     <li
-//       {...props}
-//       className={cn(
-//         `relative flex w-full border-l-2 border-solid
-//           border-[var(--tree-border-color)] pl-[calc(2*var(--spacing)-var(--radius))] last:border-transparent`,
-//         props.className,
-//       )}
-//     >
-//       {renderSubTree ? (
-//         <details open>
-//           <summary className="cursor-pointer rounded-[10px] p-2 hover:bg-zinc-200">
-//             {item.name}
-//           </summary>
-//           <ul className="ml-2">
-//             {/* {item.children.map((child) => (
-//               <TreeNode item={child} />
-//             ))} */}
-//             {renderSubTree(item)}
-//           </ul>
-//         </details>
-//       ) : (
-//         <div className="cursor-pointer rounded-[10px] p-2 hover:bg-zinc-200">
-//           {props.children && props.children}
-//         </div>
-//       )}
-//     </li>
-//   )
-// }
-
-// export { Tree, TreeNode }
