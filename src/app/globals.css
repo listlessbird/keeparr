@@ -119,3 +119,46 @@
   mask: linear-gradient(-15deg, transparent 30%, white);
   transform: translate3d(0, 0, -100vmin);
 }
+/* 
+.notes-wrapper:has([data-expanded="true"]) {
+  grid-template-columns: 20% 1fr;
+}
+
+.notes-wrapper:has([data-expanded="false"]) {
+  grid-template-columns: 0% 1fr;
+}
+
+.notes-wrapper:has([data-expanded="true"]).wrapper-small {
+  grid-template-columns: 1fr 0%;
+}
+
+.notes-wrapper:has([data-expanded="false"]).wrapper-small {
+  grid-template-columns: 0% 1fr;
+} */
+
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.tree {
+  --spacing: 1.5rem;
+  --radius: 27px;
+  --tree-border-color: #000;
+}
+
+.tree li::before {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  left: -2px;
+  top: calc(var(--spacing) * -0.25);
+  width: calc(var(--spacing) - 6px);
+  height: calc(var(--spacing) - 3px);
+  aspect-ratio: 1/2;
+  /* background-color: rebeccapurple; */
+  border-left: 2px solid var(--tree-border-color);
+  border-bottom: 2px solid var(--tree-border-color);
+}

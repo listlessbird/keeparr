@@ -32,7 +32,7 @@ export function UIAvatar({
       <text
         x={"50%"}
         y={"50%"}
-        className="leading-[1] fill-white"
+        className="fill-white leading-none"
         alignmentBaseline="middle"
         textAnchor="middle"
         dominantBaseline="middle"
