@@ -8,6 +8,7 @@ TODO:
   - Add double click to edit
 */
 import React, { createContext, ReactNode, useContext, useReducer } from "react"
+import { ChevronRightIcon } from "@radix-ui/react-icons"
 
 import { cn } from "@/lib/utils"
 
@@ -103,9 +104,9 @@ type NodeProps = {
 
 export function Node({ node: { name, children, id }, ...props }: NodeProps) {
   const { open, openNode, closeNode } = useTreeView()
-
+  const isOpen = open.get(id)
   const handleClick = () => {
-    if (open.get(id)) {
+    if (isOpen) {
       closeNode(id)
     } else {
       openNode(id)
@@ -120,12 +121,22 @@ export function Node({ node: { name, children, id }, ...props }: NodeProps) {
       )}
     >
       <div
-        className="truncate rounded-sm px-1 font-mono font-medium"
+        className="flex items-center space-x-2 rounded-sm px-1 font-mono font-medium"
         onClick={handleClick}
       >
-        {name}
+        {children?.length ? (
+          <ChevronRightIcon
+            className={cn(
+              "size-4 origin-center transition-transform duration-200",
+              isOpen ? "rotate-90" : "rotate-0",
+            )}
+          />
+        ) : (
+          <span className="size-4 shrink-0" />
+        )}
+        <span className="truncate">{name}</span>
       </div>
-      {children?.length && open.get(id) && (
+      {children?.length && isOpen && (
         <ul className="pl-4">
           {children.map((node) => (
             <Node node={node} key={node.id} />
