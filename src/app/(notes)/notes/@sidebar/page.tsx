@@ -2,10 +2,11 @@
 
 import Link from "next/link"
 
-import { Tree, TreeNode } from "@/components/tree"
+import { TreeView } from "@/components/tree"
 import { NotesSidebar } from "@/app/(notes)/_components/sidebar"
 
 import { useNotes } from "../providers"
+import { data } from "./data"
 
 export default function Sidebar() {
   const { notes } = useNotes()
@@ -13,7 +14,12 @@ export default function Sidebar() {
   return (
     <aside className="w-full overflow-hidden">
       <NotesSidebar>
-        <Tree>
+        <TreeView.Root className="size-full border-[1.5px] border-slate-200">
+          {data.map((node) => (
+            <TreeView.Node node={node} key={node.id} />
+          ))}
+        </TreeView.Root>
+        {/* <Tree>
           {Array.from(notes).map((noteItem) => {
             const [id, item] = noteItem
             item["children"] = []
@@ -32,7 +38,7 @@ export default function Sidebar() {
               </TreeNode>
             )
           })}
-        </Tree>
+        </Tree> */}
       </NotesSidebar>
     </aside>
   )
