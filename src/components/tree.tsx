@@ -9,8 +9,20 @@ TODO:
 */
 import React, { createContext, ReactNode, useContext, useReducer } from "react"
 import { ChevronRightIcon } from "@radix-ui/react-icons"
+import isHotkey from "is-hotkey"
 
 import { cn } from "@/lib/utils"
+
+import {
+  getFirstFocusableId,
+  getLastFocusableId,
+  getNextFocusableId,
+  getParentFocusableId,
+  getPrevFocusableId,
+  RovingIndexTabItem,
+  RovingTabIndexRoot,
+  useRovingTabIndex,
+} from "./roving-index"
 
 export type TreeViewState = Map<string, boolean>
 
@@ -102,17 +114,28 @@ export type RootProps = {
   children: ReactNode | ReactNode[]
   value: string | null
   onSelectChange: (value: string | null) => void
+  label?: string
 } & React.ComponentProps<"ul">
 
-export function Root({ children, value, onSelectChange, ...props }: RootProps) {
+export function Root({
+  children,
+  value,
+  onSelectChange,
+  label,
+  ...props
+}: RootProps) {
   return (
     <TreeViewProvider selectId={onSelectChange} selectedId={value}>
-      <ul
+      <RovingTabIndexRoot
+        as={"ul"}
         className={cn("flex flex-col overflow-auto", props.className)}
+        aria-label={label ?? "filetree"}
+        aria-multiselectable="false"
+        role="tree"
         {...props}
       >
         {children}
-      </ul>
+      </RovingTabIndexRoot>
     </TreeViewProvider>
   )
 }
@@ -123,6 +146,7 @@ type NodeProps = {
 
 export function Node({ node: { name, children, id }, ...props }: NodeProps) {
   const { open, openNode, closeNode, selectId, selectedId } = useTreeView()
+  const { getOrderedItems, getRovingProps, isFocusable } = useRovingTabIndex(id)
   const isOpen = open.get(id)
   const handleClick = () => {
     if (isOpen) {
@@ -135,19 +159,63 @@ export function Node({ node: { name, children, id }, ...props }: NodeProps) {
 
   return (
     <li
-      className={cn(
-        "flex cursor-pointer select-none flex-col",
-        props.className,
-      )}
-      {...props}
+      {...getRovingProps<"li">({
+        className: cn(
+          "group flex cursor-pointer select-none flex-col focus:outline-none",
+          props.className,
+        ),
+        "aria-expanded": children?.length ? Boolean(isOpen) : undefined,
+        "aria-selected": selectedId === id,
+        role: "treeitem",
+        onKeyDown: (e) => {
+          e.stopPropagation()
+          const items = getOrderedItems()
+
+          let nextFocusable: RovingIndexTabItem | undefined
+          if (isHotkey("up", e)) {
+            e.preventDefault()
+            nextFocusable = getPrevFocusableId(items, id)
+          } else if (isHotkey("down", e)) {
+            e.preventDefault()
+            nextFocusable = getNextFocusableId(items, id)
+          } else if (isHotkey("right", e)) {
+            if (isOpen && children?.length) {
+              nextFocusable = getNextFocusableId(items, id)
+            } else {
+              openNode(id)
+            }
+          } else if (isHotkey("left", e)) {
+            if (isOpen && children?.length) {
+              closeNode(id)
+            } else {
+              nextFocusable = getParentFocusableId(items, id)
+              console.log(nextFocusable)
+            }
+          } else if (isHotkey("home", e)) {
+            e.preventDefault()
+            nextFocusable = getFirstFocusableId(items)
+          } else if (isHotkey("end", e)) {
+            e.preventDefault()
+            nextFocusable = getLastFocusableId(items)
+          } else if (isHotkey("space", e)) {
+            e.preventDefault()
+            selectId(id)
+          }
+
+          nextFocusable?.element.focus()
+        },
+      })}
+      // className={}
+      // {...props}
     >
       <div
         className={cn(
-          "flex items-center space-x-2 rounded-sm px-1 font-mono font-medium",
+          "flex items-center space-x-2 rounded-sm border-[1.5px] border-transparent px-1 font-mono font-medium",
           {
             "bg-slate-300": selectedId === id,
             "hover:bg-slate-200": selectedId !== id,
           },
+          isFocusable && "group-focus:border-slate-500",
         )}
         onClick={handleClick}
       >
@@ -164,7 +232,7 @@ export function Node({ node: { name, children, id }, ...props }: NodeProps) {
         <span className="truncate">{name}</span>
       </div>
       {children?.length && isOpen && (
-        <ul className="pl-4">
+        <ul className="pl-4" role="group">
           {children.map((node) => (
             <Node node={node} key={node.id} />
           ))}

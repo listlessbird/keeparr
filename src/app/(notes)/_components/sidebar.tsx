@@ -1,13 +1,11 @@
 "use client"
 
-import { Dispatch, SetStateAction, useState } from "react"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/button"
-import { Tree } from "@/components/tree"
 import { UserAvatar } from "@/app/_components/user-avatar"
 
 import { useNotesLayoutState } from "../notes/providers"
@@ -48,7 +46,7 @@ export function NotesSidebar({ children }: { children: React.ReactNode }) {
             <p className="line-clamp-1 text-xs text-gray-400">{user?.email}</p>
           </div>
         </div>
-        <div className="mt-2 self-start p-2">{children}</div>
+        <div className="mt-2 p-2">{children}</div>
       </div>
     </div>
   )

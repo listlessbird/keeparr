@@ -11,7 +11,7 @@ import {
   useState,
 } from "react"
 
-type RovingIndexTabItem = {
+export type RovingIndexTabItem = {
   id: string
   element: HTMLElement
 }
@@ -98,6 +98,8 @@ export function RovingTabIndexRoot<T extends ElementType>({
           props.onBlur?.(e)
           setIsShiftTabbing(false)
         }}
+        {...props}
+        data-root
       >
         {children}
       </Component>
@@ -115,7 +117,7 @@ export function useRovingTabIndex(id: string) {
     ) {
       return {
         ...props,
-        tabindex: focusableId === id ? 0 : -1,
+        tabIndex: focusableId === id ? 0 : -1,
         onMouseDown: (e: MouseEvent) => {
           props.onMouseDown?.(e)
           if (e.target !== e.currentTarget) return
@@ -167,4 +169,37 @@ export function getPrevFocusableId(
 ): RovingIndexTabItem | undefined {
   const currIndex = items.findIndex((item) => item.id === id)
   return items.at(currIndex === 0 ? -1 : currIndex - 1)
+}
+
+export function getParentFocusableId(
+  orderedItems: RovingIndexTabItem[],
+  id: string,
+): RovingIndexTabItem | undefined {
+  const currentElement = orderedItems.find((item) => item.id === id)?.element
+
+  if (currentElement == null) return
+
+  let possibleParent = currentElement.parentElement
+
+  while (
+    possibleParent !== null &&
+    possibleParent.getAttribute("data-item") === null &&
+    possibleParent.getAttribute("data-root") === null
+  ) {
+    possibleParent = possibleParent?.parentElement ?? null
+  }
+
+  return orderedItems.find((item) => item.element === possibleParent)
+}
+
+export function getFirstFocusableId(
+  orderedItems: RovingIndexTabItem[],
+): RovingIndexTabItem | undefined {
+  return orderedItems.at(0)
+}
+
+export function getLastFocusableId(
+  orderedItems: RovingIndexTabItem[],
+): RovingIndexTabItem | undefined {
+  return orderedItems.at(-1)
 }
