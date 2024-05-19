@@ -10,10 +10,39 @@ import {
   useReducer,
   useState,
 } from "react"
-import useSwr from "swr"
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 import { Note } from "@/lib/note"
 import { AuthProvider } from "@/hooks/useAuth"
+
+import { FileTreeProvider } from "./@sidebar/filetree"
+
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000,
+      },
+    },
+  })
+}
+
+let browserQueryClient: QueryClient | undefined = undefined
+
+function getQueryClient() {
+  if (typeof window === "undefined") {
+    // Server: always make a new query client
+    return makeQueryClient()
+  } else {
+    if (!browserQueryClient) browserQueryClient = makeQueryClient()
+    return browserQueryClient
+  }
+}
 
 const NotesLayoutContext = createContext<{
   isExpanded: boolean
@@ -45,12 +74,19 @@ function NotesLayoutStateProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function NotesProvider({ children }: { children: React.ReactNode }) {
+  const client = getQueryClient()
+
   return (
-    <AuthProvider>
-      <NotesLayoutStateProvider>
-        <NotesStateProvider>{children}</NotesStateProvider>
-      </NotesLayoutStateProvider>
-    </AuthProvider>
+    <QueryClientProvider client={client}>
+      <ReactQueryDevtools initialIsOpen={false} />
+      <AuthProvider>
+        <NotesLayoutStateProvider>
+          <NotesStateProvider>
+            <FileTreeProvider>{children}</FileTreeProvider>
+          </NotesStateProvider>
+        </NotesLayoutStateProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   )
 }
 
@@ -72,7 +108,7 @@ export function useNotes() {
   return ctx
 }
 
-type NotesResponse = {
+export type NotesResponse = {
   [key: string]: {
     id: string
     name: string
@@ -119,19 +155,23 @@ function notesReducer<S extends NotesState, A extends NotesActions>(
   }
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
-
 export function NotesStateProvider({
   children,
 }: {
   children: React.ReactNode
 }) {
   const [state, dispatch] = useReducer(notesReducer, initialNotesState)
-  const { data } = useSwr<NotesResponse>("/api/v1/notes", fetcher)
+  const { data } = useQuery<NotesResponse>({
+    queryKey: ["notes", "all"],
+    queryFn: async () => {
+      const res = await fetch("/api/v1/notes").then((res) => res.json())
+      return res
+    },
+  })
   useEffect(() => {
     if (data) {
       dispatch({ type: NotesActionTypes.SET_NOTES, payload: data })
-      console.log({ state })
+      // console.log({ state })
     }
   }, [data])
 

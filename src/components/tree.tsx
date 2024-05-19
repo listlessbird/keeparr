@@ -144,7 +144,11 @@ type NodeProps = {
   node: TreeNodeType
 } & React.ComponentProps<"li">
 
-export function Node({ node: { name, children, id }, ...props }: NodeProps) {
+export function Node({
+  node: { name, children, id },
+  children: childNode,
+  ...props
+}: NodeProps) {
   const { open, openNode, closeNode, selectId, selectedId } = useTreeView()
   const { getOrderedItems, getRovingProps, isFocusable } = useRovingTabIndex(id)
   const isOpen = open.get(id)
@@ -235,7 +239,8 @@ export function Node({ node: { name, children, id }, ...props }: NodeProps) {
           ) : (
             <span className="size-4 shrink-0" />
           )}
-          <span className="truncate">{name}</span>
+          {/* <span className="truncate">{name}</span> */}
+          <div className="truncate">{childNode}</div>
         </div>
         <AnimatePresence>
           {children?.length && isOpen && (
