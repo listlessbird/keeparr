@@ -11,11 +11,5 @@ const Playground = dynamic(
 )
 
 export default function NotesPage() {
-  return (
-    <div>
-      <div className="min-h-[80vh] overflow-x-hidden py-[39px] lg:pt-[50px]">
-        <Playground />
-      </div>
-    </div>
-  )
+  return <Playground />
 }
