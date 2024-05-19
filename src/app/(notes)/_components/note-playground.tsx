@@ -27,7 +27,7 @@ export function NotePlayGround({ initialContent }: NotesPlayGroundProps) {
       <BlockNoteView
         editor={editor}
         theme={playGroundTheme}
-        className="max-w-screen relative max-h-[calc(100vh-4rem)] overflow-y-auto p-2 md:p-4"
+        className="max-w-screen relative h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-y-auto p-2 md:p-4"
       />
     </div>
   )
