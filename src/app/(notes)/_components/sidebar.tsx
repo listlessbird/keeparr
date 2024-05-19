@@ -27,7 +27,8 @@ export function NotesSidebar({ children }: { children: React.ReactNode }) {
       )}
       initial={{ width: isExpanded ? "250px" : "0px" }}
       animate={{
-        width: isExpanded ? "250px" : "0px",
+        // width: isExpanded ? "250px" : "0px",
+        width: isExpanded && isMobile ? "100%" : isExpanded ? "250px" : "0px",
         visibility: isExpanded ? "visible" : "hidden",
       }}
     >
