@@ -18,11 +18,15 @@ export function NotesSidebar({ children }: { children: React.ReactNode }) {
   const { isExpanded, setIsExpanded } = useNotesLayoutState()
 
   return (
-    <div className="w-[250px]">
+    <div
+      // className="w-[250px]"
+      className={isExpanded ? "w-[250px]" : "w-0"}
+    >
       <div
         className={cn(
           `fixed inset-y-0 z-50 flex shrink flex-col bg-[#f0f0d5] text-black transition-all duration-300`,
           // isExpanded ? "w-full" : "invisible"
+          isExpanded ? "translate-x-0" : "-translate-x-full",
         )}
       >
         {isMobile && isExpanded && (
