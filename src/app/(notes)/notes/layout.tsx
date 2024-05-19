@@ -13,7 +13,7 @@ export default function NotesLayout({
     <NotesProvider>
       <Wrapper>
         {sidebar}
-        <div>
+        <div className="flex grow flex-col">
           <NotesNav />
           {children}
         </div>

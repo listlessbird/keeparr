@@ -27,10 +27,10 @@ export function NotesNav({}: {}) {
 
   return (
     <header
-      className="h-[39px] w-full max-w-[100vw] lg:h-[50px]"
+      className=" flex-[0_0_auto] border-b border-[#140c0c] bg-[#f0f0f5]"
       data-expanded={isExpanded}
     >
-      <nav className=" flex w-full justify-between bg-[#f0f0f5] p-2 shadow-sm md:p-4">
+      <nav className="flex w-full justify-between bg-[#f0f0f5] p-2 shadow-sm md:p-4">
         <Button
           // asChild
           onClick={() => {

@@ -12,15 +12,16 @@ export function NotesLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <div className="h-full bg-[#f0f0f5] text-black">
+      <div className="min-h-screen bg-[#f0f0f5] text-black">
         <div
-          className={cn(
-            `group/notes-wrapper notes-wrapper grid overflow-x-hidden transition-all duration-300 `,
-            isMobile && "wrapper-small",
-            isExpanded && `grid-cols-[20%_1fr]`,
-            !isExpanded && `grid-cols-[0_1fr]`,
-            isMobile && isExpanded && `grid-cols-[100%_0]`,
-          )}
+          className="flex w-screen"
+          // className={cn(
+          //   `group/notes-wrapper notes-wrapper grid overflow-x-hidden transition-all duration-300 `,
+          //   isMobile && "wrapper-small",
+          //   isExpanded && `grid-cols-[20%_1fr]`,
+          //   !isExpanded && `grid-cols-[0_1fr]`,
+          //   isMobile && isExpanded && `grid-cols-[100%_0]`,
+          // )}
         >
           {children}
         </div>

@@ -23,14 +23,12 @@ export function NotePlayGround({ initialContent }: NotesPlayGroundProps) {
   const editor = useCreateBlockNote({ initialContent })
 
   return (
-    <div className="grid h-full grid-cols-[minmax(0,30px)_1fr_minmax(0,30px)]">
-      <div className="col-start-2 h-full">
-        <BlockNoteView
-          editor={editor}
-          theme={playGroundTheme}
-          className="relative z-[9999]"
-        />
-      </div>
+    <div className="flex-auto overflow-auto">
+      <BlockNoteView
+        editor={editor}
+        theme={playGroundTheme}
+        className="max-w-screen relative p-2 md:p-4"
+      />
     </div>
   )
 }
