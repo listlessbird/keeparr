@@ -21,9 +21,10 @@ export function NotesSidebar({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
       className={cn(
-        `ease-[cubic-bezier(0.165,0.84,0.44,1)] z-50 flex shrink-0 flex-col bg-[#f0f0d5] text-black transition-transform duration-300`,
+        `ease-[cubic-bezier(0.165,0.84,0.44,1)] z-50 flex w-64 shrink-0 flex-col overflow-auto border-r border-gray-200 bg-gray-100 transition-transform duration-300 dark:border-gray-800 dark:bg-gray-900`,
         // isExpanded ? "w-full" : "invisible"
         isExpanded ? "translate-x-0" : "-translate-x-full",
+        // isExpanded && isMobile && "fixed left-0 top-0 h-full",
       )}
       initial={{ width: isExpanded ? "250px" : "0px" }}
       animate={{

@@ -12,9 +12,9 @@ export function NotesLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <div className="min-h-screen bg-[#f0f0f5] text-black">
+      <div className="flex min-h-screen flex-col bg-[#f0f0f5] text-black">
         <div
-          className="flex w-screen"
+          className="flex flex-1 overflow-clip"
           // className={cn(
           //   `group/notes-wrapper notes-wrapper grid overflow-x-hidden transition-all duration-300 `,
           //   isMobile && "wrapper-small",
