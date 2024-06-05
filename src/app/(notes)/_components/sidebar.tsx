@@ -42,6 +42,7 @@ export function NotesSidebar({ children }: { children: React.ReactNode }) {
                 setIsExpanded((prev) => !prev)
               }, 100)
             }}
+            className="dark:text-white"
           >
             <X size={24} />
           </Button>
@@ -60,8 +61,10 @@ export function NotesSidebar({ children }: { children: React.ReactNode }) {
           transition={{ duration: 0.3 }}
         >
           <UserAvatar />
-          <div className="flex flex-col">
-            <p className="line-clamp-1 text-lg font-bold">{user?.username}</p>
+          <div className="flex flex-col dark:text-white">
+            <p className="line-clamp-1 text-lg font-bold capitalize">
+              {user?.username}
+            </p>
             <p className="line-clamp-1 text-xs text-gray-400">{user?.email}</p>
           </div>
         </motion.div>
