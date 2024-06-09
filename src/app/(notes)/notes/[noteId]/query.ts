@@ -5,7 +5,7 @@ import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 import * as NOTESAPITYPES from "@/types/notes"
 
 async function getNoteById(noteId: string) {
-  const res = await fetch("http://localhost:3001/" + "notes/" + noteId, {
+  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "notes/" + noteId, {
     credentials: "include",
     method: "GET",
   })
