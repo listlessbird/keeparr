@@ -1,6 +1,5 @@
 "use client"
 
-import { Suspense, useEffect, useMemo, useState } from "react"
 import dynamic from "next/dynamic"
 
 import { LOADING_BLOCKS } from "./loading-blocks"
@@ -13,25 +12,21 @@ const Playground = dynamic(
     ),
   {
     ssr: false,
-    loading: () => <div>Loading...</div>,
+    loading: () => (
+      <div className="grid size-full place-content-center text-xl dark:bg-[#1f1f1f] dark:text-white">
+        Loading the editor...
+      </div>
+    ),
   },
 )
 
 function Note({ noteId }: { noteId: string }) {
-  const { data } = useGetNoteById(noteId)
+  const { data, isLoading } = useGetNoteById(noteId)
 
   return (
     <>
-      {/* <div className="overflow-x-hidden py-[39px] lg:pt-[50px]"> */}
-      {/* {loading && <Playground initialContent={initialContent} />} */}
-      {/* {!loading && <Playground initialContent={initialContent} />} */}
-      {/* </div> */}
-      {/* {data ? (
-        <Playground initialContent={data.blocks} />
-      ) : (
-        <Playground initialContent={LOADING_BLOCKS} />
-      )} */}
-      <Playground initialContent={data?.blocks} />
+      {!isLoading && <Playground initialContent={data?.blocks} />}
+      {isLoading && <Playground initialContent={LOADING_BLOCKS} />}
     </>
   )
 }
@@ -41,9 +36,5 @@ export default function Page({
 }: {
   params: { noteId: string }
 }) {
-  return (
-    <Suspense fallback={<Playground initialContent={LOADING_BLOCKS} />}>
-      <Note noteId={noteId} />
-    </Suspense>
-  )
+  return <Note noteId={noteId} />
 }
