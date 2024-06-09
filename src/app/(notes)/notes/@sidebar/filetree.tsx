@@ -6,8 +6,13 @@ import {
   useMemo,
   useReducer,
   useState,
+  useTransition,
 } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { File, Folder } from "lucide-react"
 
+import { Button } from "@/components/ui/button"
 import { TreeView } from "@/components/tree"
 
 export type FileTreeItemAttr =
@@ -182,15 +187,56 @@ export function SidebarFileTree({ tree }: { tree: FileTree }) {
 
   const nodes = Object.values(tree)
 
+  const router = useRouter()
+
+  const [isPending, startTransition] = useTransition()
+
+  console.log(`Transition Pending: ${isPending}`)
+
   return (
     <TreeView.Root
-      className="size-full border-[1.5px] border-slate-200"
+      className="size-full overflow-x-clip"
       value={selected}
       onSelectChange={select}
     >
       {nodes.map((node) => (
-        <TreeView.Node node={node} key={node.id}>
-          {node.name}
+        <TreeView.Node
+          node={node}
+          key={node.id}
+          className="text-gray-700 dark:text-gray-300"
+        >
+          <div
+            className="flex items-center space-x-2"
+            // variant={"ghost"}
+            onClick={() => {
+              startTransition(() => {
+                router.replace(`/notes/${node.id}`)
+              })
+            }}
+          >
+            <File className="size-5 text-blue-500" />
+            <div
+              onDoubleClick={(e) => {
+                e.preventDefault()
+                e.currentTarget.contentEditable = "true"
+                e.currentTarget.focus()
+
+                const range = document.createRange()
+                const selection = getSelection()
+
+                range.selectNodeContents(e.currentTarget)
+                selection?.removeAllRanges()
+                selection?.addRange(range)
+              }}
+              onBlur={(e) => {
+                e.currentTarget.contentEditable = "false"
+              }}
+            >
+              <span className="truncate font-medium text-gray-700 dark:text-gray-300">
+                {node.name}
+              </span>
+            </div>
+          </div>
         </TreeView.Node>
       ))}
     </TreeView.Root>

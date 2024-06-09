@@ -1,11 +1,10 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { Suspense, useEffect, useMemo, useState } from "react"
 import dynamic from "next/dynamic"
-import { Block } from "@blocknote/core"
 
-import { useNotes } from "../providers"
 import { LOADING_BLOCKS } from "./loading-blocks"
+import { useGetNoteById } from "./query"
 
 const Playground = dynamic(
   () =>
@@ -18,35 +17,33 @@ const Playground = dynamic(
   },
 )
 
-export default function Note({
+function Note({ noteId }: { noteId: string }) {
+  const { data } = useGetNoteById(noteId)
+
+  return (
+    <>
+      {/* <div className="overflow-x-hidden py-[39px] lg:pt-[50px]"> */}
+      {/* {loading && <Playground initialContent={initialContent} />} */}
+      {/* {!loading && <Playground initialContent={initialContent} />} */}
+      {/* </div> */}
+      {/* {data ? (
+        <Playground initialContent={data.blocks} />
+      ) : (
+        <Playground initialContent={LOADING_BLOCKS} />
+      )} */}
+      <Playground initialContent={data?.blocks} />
+    </>
+  )
+}
+
+export default function Page({
   params: { noteId },
 }: {
   params: { noteId: string }
 }) {
-  const { notes } = useNotes()
-  const [initialContent, setInitialContent] = useState<Block[] | any[]>(
-    LOADING_BLOCKS,
-  )
-
-  const [loading, setLoading] = useState(true)
-
-  console.log({ notes })
-
-  useEffect(() => {
-    console.log("effect runs")
-    const note = notes.get(noteId)
-    if (note && "blocks" in note) {
-      setInitialContent(note.blocks)
-      setLoading(false)
-    }
-  }, [noteId, notes])
-
   return (
-    <div>
-      <div className="overflow-x-hidden py-[39px] lg:pt-[50px]">
-        {loading && <Playground initialContent={initialContent} />}
-        {!loading && <Playground initialContent={initialContent} />}
-      </div>
-    </div>
+    <Suspense fallback={<Playground initialContent={LOADING_BLOCKS} />}>
+      <Note noteId={noteId} />
+    </Suspense>
   )
 }
