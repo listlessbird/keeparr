@@ -27,10 +27,10 @@ export function NotesNav({}: {}) {
 
   return (
     <header
-      className=" flex-[0_0_auto] border-b border-[#140c0c] bg-[#f0f0f5]"
+      className=" flex-[0_0_auto] border-b border-[#140c0c] bg-[#f0f0f5] dark:bg-[#303134]"
       data-expanded={isExpanded}
     >
-      <nav className="flex w-full justify-between bg-[#f0f0f5] p-2 shadow-sm md:p-4">
+      <nav className="flex w-full justify-between p-2 shadow-sm md:p-4">
         <Button
           // asChild
           onClick={() => {
@@ -38,11 +38,11 @@ export function NotesNav({}: {}) {
           }}
           variant={"icon"}
           size={"icon"}
-          className="size-6 cursor-pointer bg-transparent hover:bg-transparent"
+          className="size-6 cursor-pointer bg-transparent hover:bg-transparent dark:text-white"
         >
           <Menu size={24} className="fill-[#888888]" />
         </Button>
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-center gap-2 dark:text-white">
           <Iconify
             icon="codicon:open-preview"
             className="size-6 fill-[#888888]"

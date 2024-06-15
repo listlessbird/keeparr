@@ -1,23 +1,20 @@
-import { NotesNav } from "../_components/nav"
-import { NotesLayout as Wrapper } from "../_components/notes-layout"
+import { Chelsea_Market } from "next/font/google"
+
+import { cn } from "@/lib/utils"
+
 import { NotesProvider } from "./providers"
 
-export default function NotesLayout({
-  children,
-  sidebar,
-}: {
-  children: React.ReactNode
-  sidebar: React.ReactNode
-}) {
+const chelseaMarket = Chelsea_Market({
+  display: "fallback",
+  weight: "400",
+})
+
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <NotesProvider>
-      <Wrapper>
-        {sidebar}
-        <div className="flex grow flex-col">
-          <NotesNav />
-          {children}
-        </div>
-      </Wrapper>
+      <div className={cn(chelseaMarket.className, "bg-shark-950")}>
+        {children}
+      </div>
     </NotesProvider>
   )
 }

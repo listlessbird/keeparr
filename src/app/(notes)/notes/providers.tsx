@@ -10,10 +10,41 @@ import {
   useReducer,
   useState,
 } from "react"
-import useSwr from "swr"
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
-import { Note } from "@/lib/note"
+import { ApiNoteByUser } from "@/types/notes"
+import { Note, NoteItem } from "@/lib/note"
 import { AuthProvider } from "@/hooks/useAuth"
+
+import { FileTreeProvider } from "./[noteId]/@sidebar/filetree"
+import { useGetNotes } from "./query"
+
+function makeQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000,
+      },
+    },
+  })
+}
+
+let browserQueryClient: QueryClient | undefined = undefined
+
+function getQueryClient() {
+  if (typeof window === "undefined") {
+    // Server: always make a new query client
+    return makeQueryClient()
+  } else {
+    if (!browserQueryClient) browserQueryClient = makeQueryClient()
+    return browserQueryClient
+  }
+}
 
 const NotesLayoutContext = createContext<{
   isExpanded: boolean
@@ -45,19 +76,26 @@ function NotesLayoutStateProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function NotesProvider({ children }: { children: React.ReactNode }) {
+  const client = getQueryClient()
+
   return (
-    <AuthProvider>
-      <NotesLayoutStateProvider>
-        <NotesStateProvider>{children}</NotesStateProvider>
-      </NotesLayoutStateProvider>
-    </AuthProvider>
+    <QueryClientProvider client={client}>
+      <ReactQueryDevtools initialIsOpen={false} />
+      <AuthProvider>
+        <NotesLayoutStateProvider>
+          <NotesStateProvider>
+            <FileTreeProvider>{children}</FileTreeProvider>
+          </NotesStateProvider>
+        </NotesLayoutStateProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   )
 }
 
 // TODO: Maybe change this to use a global store instead of context
 
 interface NotesContextType {
-  notes: Map<string, Note>
+  notes: Map<string, NoteItem>
 }
 
 const NotesContext = createContext<NotesContextType>({} as NotesContextType)
@@ -72,31 +110,23 @@ export function useNotes() {
   return ctx
 }
 
-type NotesResponse = {
-  [key: string]: {
-    id: string
-    name: string
-    blocks: any[]
-  }
-}
-
 enum NotesActionTypes {
   ADD_NOTE = "ADD_NOTE",
   SET_NOTES = "SET_NOTES",
 }
 
-type NoteAddPayload = { id: string; note: Note }
+type NoteAddPayload = { id: string; note: NoteItem }
 
 type NotesActions =
   | { type: NotesActionTypes.ADD_NOTE; payload: NoteAddPayload }
-  | { type: NotesActionTypes.SET_NOTES; payload: NotesResponse }
+  | { type: NotesActionTypes.SET_NOTES; payload: Map<string, NoteItem> }
 
 type NotesState = {
-  notes: Map<string, Note>
+  notes: Map<string, NoteItem>
 }
 
 const initialNotesState: NotesState = {
-  notes: new Map<string, Note>(),
+  notes: new Map<string, NoteItem>(),
 }
 
 function notesReducer<S extends NotesState, A extends NotesActions>(
@@ -111,7 +141,7 @@ function notesReducer<S extends NotesState, A extends NotesActions>(
       }
 
     case "SET_NOTES": {
-      return { ...state, notes: new Map(Object.entries(action.payload)) }
+      return { ...state, notes: action.payload }
     }
 
     default:
@@ -119,7 +149,22 @@ function notesReducer<S extends NotesState, A extends NotesActions>(
   }
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
+const constructNotes = (allNotes: ApiNoteByUser) => {
+  const notes = new Map<string, NoteItem>()
+
+  for (const [id, note] of Object.entries(allNotes)) {
+    const n = new Note(note.id, note.title, {
+      createdAt: new Date(note.createdAt),
+      updatedAt: new Date(note.updatedAt),
+      directoryId: note.directoryId,
+      s3_key: note.s3_key,
+    })
+
+    notes.set(id, n)
+  }
+
+  return notes
+}
 
 export function NotesStateProvider({
   children,
@@ -127,11 +172,12 @@ export function NotesStateProvider({
   children: React.ReactNode
 }) {
   const [state, dispatch] = useReducer(notesReducer, initialNotesState)
-  const { data } = useSwr<NotesResponse>("/api/v1/notes", fetcher)
+  const { data } = useGetNotes()
+
   useEffect(() => {
     if (data) {
-      dispatch({ type: NotesActionTypes.SET_NOTES, payload: data })
-      console.log({ state })
+      const notes = constructNotes(data)
+      dispatch({ type: NotesActionTypes.SET_NOTES, payload: notes })
     }
   }, [data])
 

@@ -6,9 +6,9 @@ export default function LandingLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="grid min-h-dvh landing-root">
+    <div className="landing-root grid min-h-dvh">
       <div className="relative">
-        <header className="max-h-min fixed top-0 z-10">
+        <header className="fixed top-0 z-10 max-h-min">
           <Navbar />
         </header>
         {children}

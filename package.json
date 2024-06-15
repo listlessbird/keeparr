@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS='--inspect' next dev",
     "turbo": "NODE_OPTIONS=--inspect next dev --turbo",
     "build": "next build",
     "start": "next start",
@@ -24,6 +24,8 @@
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
+    "@tanstack/react-query": "^5.37.1",
+    "@tanstack/react-query-devtools": "^5.37.1",
     "@types/uuid": "^9.0.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
@@ -31,14 +33,13 @@
     "is-hotkey": "^0.2.0",
     "lucide-react": "^0.314.0",
     "next": "latest",
-    "next-themes": "^0.2.1",
+    "next-themes": "^0.3.0",
     "react": "latest",
     "react-dom": "latest",
-    "swr": "^2.2.5",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1",
-    "zod": "^3.22.4"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.1.0",

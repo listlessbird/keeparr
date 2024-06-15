@@ -1,3 +1,5 @@
+import { Block } from "@blocknote/core"
+
 export const LOADING_BLOCKS = [
   {
     type: "paragraph",
@@ -97,4 +99,4 @@ export const LOADING_BLOCKS = [
   {
     type: "paragraph",
   },
-]
+] as Block[]
