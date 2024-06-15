@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { TreeView } from "@/components/tree"
 import { NotesSidebar } from "@/app/(notes)/_components/sidebar"
 
-import { useNotes } from "../providers"
+import { useNotes } from "../../providers"
 import { constructFileItemsAction } from "./action"
 import {
   FileTree,

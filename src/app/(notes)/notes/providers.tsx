@@ -21,7 +21,7 @@ import { ApiNoteByUser } from "@/types/notes"
 import { Note } from "@/lib/note"
 import { AuthProvider } from "@/hooks/useAuth"
 
-import { FileTreeProvider } from "./@sidebar/filetree"
+import { FileTreeProvider } from "./[noteId]/@sidebar/filetree"
 import { useGetNotes } from "./query"
 
 function makeQueryClient() {

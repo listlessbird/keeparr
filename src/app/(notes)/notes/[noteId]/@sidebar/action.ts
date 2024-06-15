@@ -4,7 +4,7 @@ import { cookies } from "next/headers"
 
 import * as NOTESAPITYPES from "@/types/notes"
 
-import { NotesResponse } from "../providers"
+import { NotesResponse } from "../../providers"
 import { FileTree } from "./filetree"
 
 function toFileTreeState<
