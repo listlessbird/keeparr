@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { FileText, Plus } from "lucide-react"
 
-import { Note } from "@/lib/note"
+import { NoteItem } from "@/lib/note"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/ui/button"
@@ -19,29 +19,10 @@ export function NotesRoot() {
   const { user } = useAuth()
   const { notes: allNotes } = useNotes()
 
-  console.log(allNotes)
-
-  // const notes = useMemo(() => {
-  //   const notesList = Array.from(allNotes, ([, note]) => ({
-  //     ...note,
-  //   }))
-
-  //   notesList.sort((a, b) => {
-  //     return (
-  //       new Date(b.meta.updatedAt).getTime() -
-  //       new Date(a.meta.updatedAt).getTime()
-  //     )
-  //   })
-
-  //   return isMobile ? notesList.slice(0, 3) : notesList.slice(0, 6)
-  // }, [isMobile, allNotes])
-
-  const [notes, setNotes] = useState<Note[]>([])
+  const [notes, setNotes] = useState<MapValue<typeof allNotes>[]>([])
 
   useEffect(() => {
-    const notesList = Array.from(allNotes, ([, note]) => ({
-      ...note,
-    }))
+    const notesList = Array.from(allNotes, ([, note]) => note)
 
     notesList.sort((a, b) => {
       return (
@@ -111,7 +92,7 @@ export function NotesRoot() {
   )
 }
 
-export function DashBoardNoteItem({ Note }: { Note: Note }) {
+export function DashBoardNoteItem({ Note }: { Note: NoteItem }) {
   return (
     <Button variant={"ghost"} className="h-auto flex-col" asChild>
       <Link href={`/notes/${Note.id}`}>

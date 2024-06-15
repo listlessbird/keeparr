@@ -17,7 +17,7 @@ export async function getNotes() {
     throw new Error(`Failed to fetch notes`)
   }
 
-  const json: NOTESAPITYPES.ApiNoteByUser = await res.json()
+  const json: NOTESAPITYPES.ApiNotesByUserResponse = await res.json()
 
   if (!json.success) {
     throw new Error("Failed to fetch notes. Please try again later.")

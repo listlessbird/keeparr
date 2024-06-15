@@ -18,7 +18,7 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 import { ApiNoteByUser } from "@/types/notes"
-import { Note } from "@/lib/note"
+import { Note, NoteItem } from "@/lib/note"
 import { AuthProvider } from "@/hooks/useAuth"
 
 import { FileTreeProvider } from "./[noteId]/@sidebar/filetree"
@@ -95,7 +95,7 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
 // TODO: Maybe change this to use a global store instead of context
 
 interface NotesContextType {
-  notes: Map<string, Note>
+  notes: Map<string, NoteItem>
 }
 
 const NotesContext = createContext<NotesContextType>({} as NotesContextType)
@@ -115,18 +115,18 @@ enum NotesActionTypes {
   SET_NOTES = "SET_NOTES",
 }
 
-type NoteAddPayload = { id: string; note: Note }
+type NoteAddPayload = { id: string; note: NoteItem }
 
 type NotesActions =
   | { type: NotesActionTypes.ADD_NOTE; payload: NoteAddPayload }
-  | { type: NotesActionTypes.SET_NOTES; payload: Map<string, Note> }
+  | { type: NotesActionTypes.SET_NOTES; payload: Map<string, NoteItem> }
 
 type NotesState = {
-  notes: Map<string, Note>
+  notes: Map<string, NoteItem>
 }
 
 const initialNotesState: NotesState = {
-  notes: new Map<string, Note>(),
+  notes: new Map<string, NoteItem>(),
 }
 
 function notesReducer<S extends NotesState, A extends NotesActions>(
@@ -150,7 +150,7 @@ function notesReducer<S extends NotesState, A extends NotesActions>(
 }
 
 const constructNotes = (allNotes: ApiNoteByUser) => {
-  const notes = new Map<string, Note>()
+  const notes = new Map<string, NoteItem>()
 
   for (const [id, note] of Object.entries(allNotes)) {
     const n = new Note(note.id, note.title, {

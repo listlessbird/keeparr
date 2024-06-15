@@ -43,14 +43,4 @@ export class Note {
   }
 }
 
-// export async function getMockedNotes() {
-//   const res = await fetch("/api/v1/notes")
-//   const json = await res.json()
-//   console.log({ json })
-//   return json.map((note: Note) => {
-//     const n = new Note(note.id, note.name)
-//     n.contents = note.content
-//     n.children = []
-//     return n
-//   })
-// }
+export type NoteItem = InstanceType<typeof Note>
