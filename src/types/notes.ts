@@ -21,7 +21,7 @@ export type ApiNotesDirectoryCreated = {
   path: string
 }
 
-export type ApiNoteByUser = {
+export type ApiNoteFields = {
   id: string
   userId: string
   title: string
@@ -29,7 +29,9 @@ export type ApiNoteByUser = {
   updatedAt: Date
   directoryId: string
   s3_key: string
-}[]
+}
+
+export type ApiNoteByUser = Record<ApiNoteFields["id"], ApiNoteFields>
 
 export type ApiNoteById = {
   id: string

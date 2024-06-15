@@ -10,14 +10,12 @@ export default function NotesLayout({
   sidebar: React.ReactNode
 }) {
   return (
-    <NotesProvider>
-      <Wrapper>
-        {sidebar}
-        <div className="flex grow flex-col">
-          <NotesNav />
-          {children}
-        </div>
-      </Wrapper>
-    </NotesProvider>
+    <Wrapper>
+      {sidebar}
+      <div className="flex grow flex-col">
+        <NotesNav />
+        {children}
+      </div>
+    </Wrapper>
   )
 }

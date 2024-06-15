@@ -17,10 +17,12 @@ import {
 } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
+import { ApiNoteByUser } from "@/types/notes"
 import { Note } from "@/lib/note"
 import { AuthProvider } from "@/hooks/useAuth"
 
 import { FileTreeProvider } from "./@sidebar/filetree"
+import { useGetNotes } from "./query"
 
 function makeQueryClient() {
   return new QueryClient({
@@ -108,14 +110,6 @@ export function useNotes() {
   return ctx
 }
 
-export type NotesResponse = {
-  [key: string]: {
-    id: string
-    name: string
-    blocks: any[]
-  }
-}
-
 enum NotesActionTypes {
   ADD_NOTE = "ADD_NOTE",
   SET_NOTES = "SET_NOTES",
@@ -125,7 +119,7 @@ type NoteAddPayload = { id: string; note: Note }
 
 type NotesActions =
   | { type: NotesActionTypes.ADD_NOTE; payload: NoteAddPayload }
-  | { type: NotesActionTypes.SET_NOTES; payload: NotesResponse }
+  | { type: NotesActionTypes.SET_NOTES; payload: Map<string, Note> }
 
 type NotesState = {
   notes: Map<string, Note>
@@ -147,12 +141,29 @@ function notesReducer<S extends NotesState, A extends NotesActions>(
       }
 
     case "SET_NOTES": {
-      return { ...state, notes: new Map(Object.entries(action.payload)) }
+      return { ...state, notes: action.payload }
     }
 
     default:
       return state
   }
+}
+
+const constructNotes = (allNotes: ApiNoteByUser) => {
+  const notes = new Map<string, Note>()
+
+  for (const [id, note] of Object.entries(allNotes)) {
+    const n = new Note(note.id, note.title, {
+      createdAt: new Date(note.createdAt),
+      updatedAt: new Date(note.updatedAt),
+      directoryId: note.directoryId,
+      s3_key: note.s3_key,
+    })
+
+    notes.set(id, n)
+  }
+
+  return notes
 }
 
 export function NotesStateProvider({
@@ -161,17 +172,12 @@ export function NotesStateProvider({
   children: React.ReactNode
 }) {
   const [state, dispatch] = useReducer(notesReducer, initialNotesState)
-  const { data } = useQuery<NotesResponse>({
-    queryKey: ["notes", "all"],
-    queryFn: async () => {
-      const res = await fetch("/api/v1/notes").then((res) => res.json())
-      return res
-    },
-  })
+  const { data } = useGetNotes()
+
   useEffect(() => {
     if (data) {
-      dispatch({ type: NotesActionTypes.SET_NOTES, payload: data })
-      // console.log({ state })
+      const notes = constructNotes(data)
+      dispatch({ type: NotesActionTypes.SET_NOTES, payload: notes })
     }
   }, [data])
 

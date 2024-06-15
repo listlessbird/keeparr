@@ -1,14 +1,29 @@
 import type { Block } from "@blocknote/core"
 
+import { ApiNoteFields } from "@/types/notes"
+
 export class Note {
   id: string
   name: string
+  meta: Pick<
+    ApiNoteFields,
+    "createdAt" | "updatedAt" | "directoryId" | "s3_key"
+  >
   blocks: Block[] = []
 
-  constructor(id: string, name: string) {
+  constructor(
+    id: string,
+    name: string,
+    meta: Pick<
+      ApiNoteFields,
+      "createdAt" | "updatedAt" | "directoryId" | "s3_key"
+    >,
+    blocks: Block[] = [],
+  ) {
     this.id = id
     this.name = name
-    this.blocks = []
+    this.meta = meta
+    this.blocks = blocks || []
   }
 
   set contents(content: Block[]) {

@@ -2,7 +2,7 @@ import { NotesRoot } from "./notes-root"
 
 export default function Notes() {
   return (
-    <div>
+    <div className="min-h-dvh">
       <NotesRoot />
     </div>
   )

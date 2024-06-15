@@ -1,22 +1,60 @@
 "use client"
 
-import { useState } from "react"
-import { Plus } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import Link from "next/link"
+import { FileText, Plus } from "lucide-react"
 
+import { Note } from "@/lib/note"
+import { useMediaQuery } from "@/hooks/use-media-query"
+import { useAuth } from "@/hooks/useAuth"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 import Typography from "@/components/ui/typography"
 import { DashboardActionButton } from "@/app/_components/DashboardActionButton"
 
-export function NotesRoot() {
-  // dummy for now
-  const [notes, setNotes] = useState([
-    {
-      id: 1,
-      title: "Note 1",
-      content: "This is the content of note 1",
-    },
-  ])
+import { useNotes } from "./providers"
 
-  if (notes.length)
+export function NotesRoot() {
+  const { isMobile } = useMediaQuery()
+  const { user } = useAuth()
+  const { notes: allNotes } = useNotes()
+
+  console.log(allNotes)
+
+  // const notes = useMemo(() => {
+  //   const notesList = Array.from(allNotes, ([, note]) => ({
+  //     ...note,
+  //   }))
+
+  //   notesList.sort((a, b) => {
+  //     return (
+  //       new Date(b.meta.updatedAt).getTime() -
+  //       new Date(a.meta.updatedAt).getTime()
+  //     )
+  //   })
+
+  //   return isMobile ? notesList.slice(0, 3) : notesList.slice(0, 6)
+  // }, [isMobile, allNotes])
+
+  const [notes, setNotes] = useState<Note[]>([])
+
+  useEffect(() => {
+    const notesList = Array.from(allNotes, ([, note]) => ({
+      ...note,
+    }))
+
+    notesList.sort((a, b) => {
+      return (
+        new Date(b.meta.updatedAt).getTime() -
+        new Date(a.meta.updatedAt).getTime()
+      )
+    })
+
+    const maxNotes = isMobile ? 3 : 6
+    setNotes(notesList.slice(0, maxNotes))
+  }, [isMobile, allNotes])
+
+  if (!allNotes.size)
     return (
       <div className="flex h-dvh items-center justify-center">
         <div className="flex flex-col items-center justify-center">
@@ -33,4 +71,57 @@ export function NotesRoot() {
         </div>
       </div>
     )
+
+  return (
+    <div className="container mx-auto pt-5 lg:pt-[5.25rem]">
+      <div className="flex flex-col">
+        <div>
+          <div className="px-4">
+            <Typography variant="h1" className="text-pretty">
+              Welcome back{" "}
+              <span className="text-primary">{user?.username}</span>! Dive back
+              into your recent work🎉
+            </Typography>
+          </div>
+          <div className="my-16">
+            {notes.map((note) => (
+              <DashBoardNoteItem key={note.id} Note={note} />
+            ))}
+          </div>
+
+          <Separator />
+          <div className="my-16">
+            <div>
+              <Typography variant="h2" className="text-pretty">
+                Or,
+              </Typography>
+            </div>
+            <div className="my-2">
+              <DashboardActionButton
+                Icon={<Plus size={48} stroke="white" />}
+                href="/notes/create"
+                text={"Create something..."}
+                className="bg-nero-950 transition-colors hover:bg-nero-600 active:bg-nero-700"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function DashBoardNoteItem({ Note }: { Note: Note }) {
+  return (
+    <Button variant={"ghost"} className="h-auto flex-col" asChild>
+      <Link href={`/notes/${Note.id}`}>
+        <div className="flex grow-0 flex-col items-center">
+          <FileText size={100} />
+          <div className="max-w-[131px]">
+            <div className="ml-2 truncate ">{Note.name}</div>
+          </div>
+        </div>
+      </Link>
+    </Button>
+  )
 }
