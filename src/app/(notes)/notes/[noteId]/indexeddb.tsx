@@ -54,8 +54,7 @@ export function IDBProvider({ children }: { children: ReactNode }) {
 
     const init = async () => {
       const idb = await initIndexedDb()
-      console.log("Database initialized")
-      console.log(idb)
+      console.log("[IndexedDB] Database initialized")
       setDb(idb)
     }
 
@@ -75,7 +74,6 @@ export function IDBProvider({ children }: { children: ReactNode }) {
 
 export function useIDB() {
   const db = useContext(IDBContext)
-  console.log("useIDB", db)
   if (!db) {
     throw new Error("useIDB must be used within a IDBProvider")
   }

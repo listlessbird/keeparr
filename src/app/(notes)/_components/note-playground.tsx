@@ -28,24 +28,26 @@ export function NotePlayGround({ initialContent }: NotesPlayGroundProps) {
   const { notes } = useNotes()
 
   useEffect(() => {
-    if (currentDocId) {
-      const note = notes.get(currentDocId)
-      if (note) {
-        note.noteBlocks = blocks
-        note.setUpdated()
-        notes.set(currentDocId, note)
-        if (db) {
-          iDBPutNote(note, db).then(() => {
-            console.log(`Note ${currentDocId} updated`)
-          })
+    const interval = setInterval(() => {
+      if (currentDocId) {
+        const note = notes.get(currentDocId)
+        if (note) {
+          note.noteBlocks = blocks
+          note.setUpdated()
+          notes.set(currentDocId, note)
+          if (db) {
+            iDBPutNote(note, db).then(() => {
+              console.log(`Note ${currentDocId} updated`)
+            })
+          }
         }
       }
+    }, 10 * 1000)
+
+    return () => {
+      clearInterval(interval)
     }
   }, [notes, currentDocId, blocks, db])
-
-  useEffect(() => {
-    console.log(blocks)
-  }, [blocks])
 
   return (
     <div className="flex-auto dark:bg-[#1f1f1f]">
