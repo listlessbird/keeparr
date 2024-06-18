@@ -49,6 +49,10 @@ export class Note {
   getBlockLength() {
     return this.blocks.length
   }
+
+  setUpdated() {
+    this.meta.updatedAt = new Date()
+  }
 }
 
 export type NoteItem = InstanceType<typeof Note>

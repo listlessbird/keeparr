@@ -7,10 +7,10 @@ import "@blocknote/react/style.css"
 
 import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
-import { Block, BlockSchemaFromSpecs, BlockSpecs } from "@blocknote/core"
+import { Block } from "@blocknote/core"
 import { useTheme } from "next-themes"
 
-import { useIDB } from "../notes/[noteId]/indexeddb"
+import { iDBPutNote, useIDB } from "../notes/[noteId]/indexeddb"
 import { useNotes } from "../notes/providers"
 
 type NotesPlayGroundProps = {
@@ -32,15 +32,16 @@ export function NotePlayGround({ initialContent }: NotesPlayGroundProps) {
       const note = notes.get(currentDocId)
       if (note) {
         note.noteBlocks = blocks
+        note.setUpdated()
         notes.set(currentDocId, note)
-
         if (db) {
-          db.put("notes", note, currentDocId)
-          console.log("Note updated in indexedDB")
+          iDBPutNote(note, db).then(() => {
+            console.log(`Note ${currentDocId} updated`)
+          })
         }
       }
     }
-  }, [notes, currentDocId, blocks])
+  }, [notes, currentDocId, blocks, db])
 
   useEffect(() => {
     console.log(blocks)
