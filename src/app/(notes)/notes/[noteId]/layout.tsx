@@ -1,6 +1,6 @@
 import { NotesNav } from "../../_components/nav"
 import { NotesLayout as Wrapper } from "../../_components/notes-layout"
-import { NotesProvider } from "../providers"
+import { Providers } from "./providers"
 
 export default function NotesLayout({
   children,
@@ -10,12 +10,14 @@ export default function NotesLayout({
   sidebar: React.ReactNode
 }) {
   return (
-    <Wrapper>
-      {sidebar}
-      <div className="flex grow flex-col">
-        <NotesNav />
-        {children}
-      </div>
-    </Wrapper>
+    <Providers>
+      <Wrapper>
+        {sidebar}
+        <div className="flex grow flex-col">
+          <NotesNav />
+          {children}
+        </div>
+      </Wrapper>
+    </Providers>
   )
 }

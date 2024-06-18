@@ -30,6 +30,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "framer-motion": "^11.2.4",
+    "idb": "^8.0.0",
     "is-hotkey": "^0.2.0",
     "lucide-react": "^0.314.0",
     "next": "latest",
