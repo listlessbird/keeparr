@@ -8,23 +8,27 @@ import {
   useState,
   useTransition,
 } from "react"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { File, Folder } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { TreeView } from "@/components/tree"
+import { TreeItem } from "@/app/(notes)/_components/TreeItem"
+
+import { createNoteAction } from "../action"
 
 export type FileTreeItemAttr =
   | {
       id: string
       name: string
       type: "folder"
+      // to be used for new files
+      fresh?: boolean
       children: FileTreeItemAttr[]
     }
   | {
       id: string
       name: string
+      fresh?: boolean
       type: "file"
       children: []
     }
@@ -36,6 +40,7 @@ enum FileTreeActionTypes {
   CREATE_FILE = "CREATE_FILE",
   CREATE_FOLDER = "CREATE_FOLDER",
   DELETE_FILE = "DELETE_FILE",
+  UPDATE_FILE = "UPDATE_FILE",
 }
 
 type FileTreeAction =
@@ -55,6 +60,10 @@ type FileTreeAction =
       type: FileTreeActionTypes.DELETE_FILE
       payload: Pick<FileTreeItemAttr, "id">
     }
+  | {
+      type: FileTreeActionTypes.UPDATE_FILE
+      payload: FileTreeItemAttr
+    }
 
 export function fileTreeReducer(
   state: FileTree,
@@ -71,6 +80,7 @@ export function fileTreeReducer(
           id: action.payload.id,
           name: action.payload.name,
           type: "file",
+          fresh: true,
           children: [],
         },
       }
@@ -90,6 +100,12 @@ export function fileTreeReducer(
       const { [action.payload.id]: _, ...rest } = state
       return rest
 
+    case FileTreeActionTypes.UPDATE_FILE:
+      return {
+        ...state,
+        [action.payload.id]: action.payload,
+      }
+
     default:
       return state
   }
@@ -97,6 +113,7 @@ export function fileTreeReducer(
 
 type FileTreeContextType = {
   tree: FileTree
+  mutateFile: (item: FileTreeItemAttr) => void
   createFile: (name: string) => void
   createFolder: (name: string) => void
   deleteFile: (id: string) => void
@@ -110,10 +127,21 @@ const fileTreeContext = createContext<FileTreeContextType | undefined>({
   createFolder: () => {},
   deleteFile: () => {},
   setTree: () => {},
+  mutateFile: () => {},
 })
 
 export function FileTreeProvider({ children }: { children: ReactNode }) {
   const [tree, dispatch] = useReducer(fileTreeReducer, initialFileTree)
+
+  const mutateTreeItem = useCallback(
+    (item: FileTreeItemAttr) => {
+      dispatch({
+        type: FileTreeActionTypes.UPDATE_FILE,
+        payload: item,
+      })
+    },
+    [dispatch],
+  )
 
   const createFile = useCallback(
     (name: string) => {
@@ -164,8 +192,9 @@ export function FileTreeProvider({ children }: { children: ReactNode }) {
       createFolder,
       deleteFile,
       setTree,
+      mutateFile: mutateTreeItem,
     }),
-    [tree, createFile, createFolder, deleteFile, setTree],
+    [tree, createFile, createFolder, deleteFile, setTree, mutateTreeItem],
   )
   return (
     <fileTreeContext.Provider value={contextValue}>
@@ -176,22 +205,26 @@ export function FileTreeProvider({ children }: { children: ReactNode }) {
 
 export function useFileTree() {
   const context = useContext(fileTreeContext)
+
+  const getTreeItem = (id: string) => context?.tree[id]
+
   if (!context) {
     throw new Error("useFileTree must be used within a FileTreeProvider")
   }
-  return context
+
+  const ctx = { ...context, getTreeItem }
+
+  return ctx
 }
 
 export function SidebarFileTree({ tree }: { tree: FileTree }) {
   const [selected, select] = useState<string | null>(null)
 
+  const { getTreeItem, mutateFile, tree: ctxTree } = useFileTree()
+
+  console.log("Tree", tree)
+
   const nodes = Object.values(tree)
-
-  const router = useRouter()
-
-  const [isPending, startTransition] = useTransition()
-
-  console.log(`Transition Pending: ${isPending}`)
 
   return (
     <TreeView.Root
@@ -205,38 +238,30 @@ export function SidebarFileTree({ tree }: { tree: FileTree }) {
           key={node.id}
           className="text-gray-700 dark:text-gray-300"
         >
-          <div
-            className="flex items-center space-x-2"
-            // variant={"ghost"}
-            onClick={() => {
-              startTransition(() => {
-                router.replace(`/notes/${node.id}`)
-              })
+          <TreeItem
+            node={node}
+            Icon={node.type === "folder" ? Folder : File}
+            onCreated={async (node) => {
+              const formData = new FormData()
+              formData.append("name", node.name)
+              formData.append("blocks", JSON.stringify([]))
+
+              try {
+                const result = await createNoteAction(formData)
+                if ("error" in result) {
+                  console.error("Failed to create note:", result.error)
+                } else {
+                  console.log("Note created:", result.success)
+                  mutateFile({
+                    ...node,
+                    children: [],
+                  })
+                }
+              } catch (error) {
+                console.error("Error creating note:", error)
+              }
             }}
-          >
-            <File className="size-5 text-blue-500" />
-            <div
-              onDoubleClick={(e) => {
-                e.preventDefault()
-                e.currentTarget.contentEditable = "true"
-                e.currentTarget.focus()
-
-                const range = document.createRange()
-                const selection = getSelection()
-
-                range.selectNodeContents(e.currentTarget)
-                selection?.removeAllRanges()
-                selection?.addRange(range)
-              }}
-              onBlur={(e) => {
-                e.currentTarget.contentEditable = "false"
-              }}
-            >
-              <span className="truncate font-medium text-gray-700 dark:text-gray-300">
-                {node.name}
-              </span>
-            </div>
-          </div>
+          />
         </TreeView.Node>
       ))}
     </TreeView.Root>

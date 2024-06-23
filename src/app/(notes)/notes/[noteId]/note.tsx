@@ -1,11 +1,7 @@
 "use client"
 
-import { useEffect } from "react"
 import dynamic from "next/dynamic"
-import { useBlockNoteEditor } from "@blocknote/react"
 
-import { useNotes } from "../providers"
-import { useIDB } from "./indexeddb"
 import { LOADING_BLOCKS } from "./loading-blocks"
 import { useGetNoteById } from "./query"
 

@@ -1,19 +1,5 @@
+import { ApiResponse } from "@/types"
 import { Block } from "@blocknote/core"
-
-export type ApiResponse<T extends Record<string, any> = Record<string, any>> =
-  | {
-      success: true
-      data: T
-    }
-  | {
-      success: false
-      error: string
-    }
-
-export type ApiFailure = {
-  success: false
-  error: string
-}
 
 export type ApiNotesDirectoryCreated = {
   dirId: string

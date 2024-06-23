@@ -1,5 +1,7 @@
 import { cookies } from "next/headers"
 
+import { ApiSessionResponse } from "@/types/auth"
+
 export async function getSession(SessionCookies = "") {
   const resp = await fetch("http://localhost:3001/auth", {
     credentials: "include",
@@ -13,7 +15,6 @@ export async function getSession(SessionCookies = "") {
     return { user: null, session: null }
   }
 
-  const json = await resp.json()
-  //   console.log(json)
+  const json: ApiSessionResponse = await resp.json()
   return json
 }

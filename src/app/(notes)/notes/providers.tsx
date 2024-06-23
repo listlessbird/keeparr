@@ -20,6 +20,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { ApiNoteByUser } from "@/types/notes"
 import { Note, NoteItem } from "@/lib/note"
 import { AuthProvider } from "@/hooks/useAuth"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 import { FileTreeProvider } from "./[noteId]/@sidebar/filetree"
 import { useGetNotes } from "./query"
@@ -84,7 +85,9 @@ export function NotesProvider({ children }: { children: React.ReactNode }) {
       <AuthProvider>
         <NotesLayoutStateProvider>
           <NotesStateProvider>
-            <FileTreeProvider>{children}</FileTreeProvider>
+            <FileTreeProvider>
+              <TooltipProvider>{children}</TooltipProvider>
+            </FileTreeProvider>
           </NotesStateProvider>
         </NotesLayoutStateProvider>
       </AuthProvider>
