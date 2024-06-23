@@ -25,7 +25,7 @@ export function TreeItem({ Icon, node, onCreated }: TreeItemProps) {
   }, [itemRef, onCreated, node.fresh])
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex max-w-[150px] items-center space-x-2">
       <Icon className="size-5 text-blue-500" />
       <div
         onFocus={(e) => {
@@ -63,8 +63,9 @@ export function TreeItem({ Icon, node, onCreated }: TreeItemProps) {
           }
         }}
         ref={itemRef}
+        className="min-w-0 flex-1"
       >
-        <span className="truncate font-medium text-gray-700 dark:text-gray-300">
+        <span className="block truncate font-medium text-gray-700 dark:text-gray-300">
           {node.name}
         </span>
       </div>
