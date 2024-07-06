@@ -48,8 +48,8 @@ export function useEditOnClick({
       if (e.key === "Enter" || e.key === "Escape") {
         stopEditing()
       }
-
-      if (e.code === "space") {
+      // this is manually needed until i fix how the input for filetree is handled :(
+      if (e.key === " ") {
         setValue((val) => val + " ")
       }
     },
