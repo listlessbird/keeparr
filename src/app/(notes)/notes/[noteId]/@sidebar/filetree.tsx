@@ -11,8 +11,10 @@ import {
 import { useRouter } from "next/navigation"
 import { File, Folder } from "lucide-react"
 
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { TreeView } from "@/components/tree"
 import { TreeItem } from "@/app/(notes)/_components/TreeItem"
+import { DefaultNoteBlock } from "@/app/(notes)/blocks"
 
 import { createNoteAction } from "../action"
 
@@ -220,9 +222,7 @@ export function useFileTree() {
 export function SidebarFileTree({ tree }: { tree: FileTree }) {
   const [selected, select] = useState<string | null>(null)
 
-  const { getTreeItem, mutateFile, tree: ctxTree } = useFileTree()
-
-  console.log("Tree", tree)
+  const { mutateFile } = useFileTree()
 
   const nodes = Object.values(tree)
 
@@ -232,38 +232,40 @@ export function SidebarFileTree({ tree }: { tree: FileTree }) {
       value={selected}
       onSelectChange={select}
     >
-      {nodes.map((node) => (
-        <TreeView.Node
-          node={node}
-          key={node.id}
-          className="text-gray-700 dark:text-gray-300"
-        >
-          <TreeItem
+      <ScrollArea className="h-[800px] rounded-md border p-4 lg:h-[85vh]">
+        {nodes.map((node) => (
+          <TreeView.Node
             node={node}
-            Icon={node.type === "folder" ? Folder : File}
-            onCreated={async (node) => {
-              const formData = new FormData()
-              formData.append("name", node.name)
-              formData.append("blocks", JSON.stringify([]))
+            key={node.id}
+            className="text-gray-700 dark:text-gray-300"
+          >
+            <TreeItem
+              node={node}
+              Icon={node.type === "folder" ? Folder : File}
+              onCreated={async (node) => {
+                const formData = new FormData()
+                formData.append("name", node.name)
+                formData.append("blocks", JSON.stringify(DefaultNoteBlock))
 
-              try {
-                const result = await createNoteAction(formData)
-                if ("error" in result) {
-                  console.error("Failed to create note:", result.error)
-                } else {
-                  console.log("Note created:", result.success)
-                  mutateFile({
-                    ...node,
-                    children: [],
-                  })
+                try {
+                  const result = await createNoteAction(formData)
+                  if ("error" in result) {
+                    console.error("Failed to create note:", result.error)
+                  } else {
+                    console.log("Note created:", result.success)
+                    mutateFile({
+                      ...node,
+                      children: [],
+                    })
+                  }
+                } catch (error) {
+                  console.error("Error creating note:", error)
                 }
-              } catch (error) {
-                console.error("Error creating note:", error)
-              }
-            }}
-          />
-        </TreeView.Node>
-      ))}
+              }}
+            />
+          </TreeView.Node>
+        ))}
+      </ScrollArea>
     </TreeView.Root>
   )
 }
