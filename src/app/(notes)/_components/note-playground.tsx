@@ -17,6 +17,7 @@ type NotesPlayGroundProps = {
   initialContent?: Block[]
 }
 export function NotePlayGround({ initialContent }: NotesPlayGroundProps) {
+  console.log(initialContent)
   const editor = useCreateBlockNote({ initialContent })
   const { theme } = useTheme()
   const [blocks, setBlocks] = useState<Block[]>(initialContent || [])

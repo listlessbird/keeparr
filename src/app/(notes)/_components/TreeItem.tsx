@@ -72,6 +72,7 @@ export function TreeItem({ Icon, node, onCreated }: TreeItemProps) {
       </div> */}
       <ClickToEdit
         initialValue={node.name}
+        onEditEnd={(val) => console.log("Value changed", val)}
         renderReader={(value, startEditing) => (
           <div
             onBlur={(e) => {

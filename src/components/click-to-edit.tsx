@@ -10,7 +10,7 @@ export function ClickToEdit({
 }: {
   initialValue: string
   onEditStart?: () => void
-  onEditEnd?: () => void
+  onEditEnd?: (val: string) => void
   renderReader: (value: string, startEditing: () => void) => JSX.Element
 } & Omit<InputProps, "value" | "onChange" | "onKeyDown" | "autoFocus">) {
   const {
@@ -31,6 +31,7 @@ export function ClickToEdit({
       {isEditing ? (
         <Input
           {...rest}
+          type="text"
           value={value}
           onChange={(e) => handleValueChange(e.target.value)}
           onKeyDown={handleEditingOnKeyPress}

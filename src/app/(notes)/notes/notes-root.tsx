@@ -1,7 +1,9 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { MapValue } from "@/types"
 import { FileText, Plus } from "lucide-react"
 
 import { NoteItem } from "@/lib/note"
@@ -11,6 +13,8 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import Typography from "@/components/ui/typography"
 import { DashboardActionButton } from "@/app/_components/DashboardActionButton"
+import { DefaultNoteBlock } from "@/app/(notes)/blocks"
+import { createNoteAction } from "@/app/(notes)/notes/[noteId]/action"
 
 import { useNotes } from "./providers"
 
@@ -20,6 +24,8 @@ export function NotesRoot() {
   const { notes: allNotes } = useNotes()
 
   const [notes, setNotes] = useState<MapValue<typeof allNotes>[]>([])
+
+  const router = useRouter()
 
   useEffect(() => {
     const notesList = Array.from(allNotes, ([, note]) => note)
@@ -35,14 +41,34 @@ export function NotesRoot() {
     setNotes(notesList.slice(0, maxNotes))
   }, [isMobile, allNotes])
 
+  const handleNewNote = useCallback(
+    async (e: MouseEvent<HTMLButtonElement>) => {
+      const formData = new FormData()
+      formData.append("name", "new note")
+      formData.append("blocks", JSON.stringify(DefaultNoteBlock))
+
+      try {
+        const result = await createNoteAction(formData)
+        if ("error" in result) {
+          console.error("Failed to create note:", result.error)
+        } else {
+          console.log("Note created:", result.success)
+          router.push(`/notes/${result.success.id}`)
+        }
+      } catch (error) {
+        console.error("Error creating note:", error)
+      }
+    },
+    [router],
+  )
   if (!allNotes.size)
     return (
       <div className="flex h-dvh items-center justify-center">
         <div className="flex flex-col items-center justify-center">
           <DashboardActionButton
             Icon={<Plus size={48} stroke="white" />}
-            href="/notes/create"
-            text={"Create something..."}
+            onClick={handleNewNote}
+            text={"Create your first note"}
             className="bg-nero-950 transition-colors hover:bg-nero-600 active:bg-nero-700"
           />
           <Typography variant="p" className="text-center">
@@ -80,8 +106,8 @@ export function NotesRoot() {
             <div className="my-2">
               <DashboardActionButton
                 Icon={<Plus size={48} stroke="white" />}
-                href="/notes/create"
-                text={"Create something..."}
+                onClick={handleNewNote}
+                text={"Create a note"}
                 className="bg-nero-950 transition-colors hover:bg-nero-600 active:bg-nero-700"
               />
             </div>

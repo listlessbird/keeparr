@@ -3,7 +3,7 @@ import { KeyboardEvent, useCallback, useState } from "react"
 type UseEditOnClickOpts = {
   initialValue: string
   onEditStart?: () => void
-  onEditEnd?: () => void
+  onEditEnd?: (val: string) => void
 }
 
 type UseEditOnClickReturn = {
@@ -33,10 +33,10 @@ export function useEditOnClick({
 
   const stopEditing = useCallback(() => {
     if (isEditing && onEditEnd) {
-      onEditEnd()
+      onEditEnd(value)
     }
     setIsEditing(false)
-  }, [isEditing, onEditEnd])
+  }, [isEditing, onEditEnd, value])
 
   const handleValueChange = useCallback((value: string) => {
     setValue(value)
@@ -44,8 +44,13 @@ export function useEditOnClick({
 
   const handleEditingOnKeyPress = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
+      console.log("Key pressed", e.key, e.code)
       if (e.key === "Enter" || e.key === "Escape") {
         stopEditing()
+      }
+
+      if (e.code === "space") {
+        setValue((val) => val + " ")
       }
     },
     [stopEditing],
