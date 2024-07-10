@@ -10,9 +10,10 @@ type TreeItemProps = {
     item: Omit<FileTreeItemAttr, "children"> & { fresh?: boolean },
     domNode: HTMLDivElement,
   ) => void
+  onRename?: (newName: string) => void
 }
 
-export function TreeItem({ Icon, node, onCreated }: TreeItemProps) {
+export function TreeItem({ Icon, node, onCreated, onRename }: TreeItemProps) {
   const itemRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -26,53 +27,14 @@ export function TreeItem({ Icon, node, onCreated }: TreeItemProps) {
   }, [itemRef, onCreated, node.fresh])
 
   return (
-    <div className="flex max-w-[150px] items-center space-x-2">
+    <div className="flex max-w-[150px] items-center justify-center space-x-2">
       <Icon className="size-5 text-blue-500" />
-      {/* <div
-        onFocus={(e) => {
-          if (node.fresh) {
-            console.log("Focused and node is fresh")
-            const range = document.createRange()
-            const selection = getSelection()
-
-            range.selectNodeContents(e.currentTarget)
-            selection?.removeAllRanges()
-            selection?.addRange(range)
-          }
-        }}
-        onDoubleClick={(e) => {
-          e.preventDefault()
-          e.currentTarget.contentEditable = "true"
-          e.currentTarget.focus()
-
-          const range = document.createRange()
-          const selection = getSelection()
-
-          range.selectNodeContents(e.currentTarget)
-          selection?.removeAllRanges()
-          selection?.addRange(range)
-        }}
-        onBlur={(e) => {
-          e.currentTarget.contentEditable = "false"
-
-          if (e.currentTarget.textContent) {
-            node.name = e.currentTarget.textContent
-          }
-
-          if (onCreated) {
-            onCreated({ ...node, fresh: false }, e.currentTarget)
-          }
-        }}
-        ref={itemRef}
-        className="min-w-0 flex-1"
-      >
-        <span className="block truncate font-medium text-gray-700 dark:text-gray-300">
-          {node.name}
-        </span>
-      </div> */}
       <ClickToEdit
         initialValue={node.name}
-        onEditEnd={(val) => console.log("Value changed", val)}
+        onEditEnd={(val) => {
+          console.log(`Val changed to ${val}`)
+          onRename?.(val)
+        }}
         renderReader={(value, startEditing) => (
           <div
             onBlur={(e) => {
@@ -99,8 +61,8 @@ export function TreeItem({ Icon, node, onCreated }: TreeItemProps) {
             className="min-w-0 flex-1"
           >
             <span
-              className="block truncate font-medium text-gray-700 dark:text-gray-300"
-              onClick={startEditing}
+              className="block font-medium text-gray-700 dark:text-gray-300 lg:truncate"
+              onDoubleClick={startEditing}
             >
               {value}
             </span>

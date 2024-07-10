@@ -16,7 +16,7 @@ import { TreeView } from "@/components/tree"
 import { TreeItem } from "@/app/(notes)/_components/TreeItem"
 import { DefaultNoteBlock } from "@/app/(notes)/blocks"
 
-import { createNoteAction } from "../action"
+import { createNoteAction, updateNoteAction } from "../action"
 
 export type FileTreeItemAttr =
   | {
@@ -260,6 +260,25 @@ export function SidebarFileTree({ tree }: { tree: FileTree }) {
                   }
                 } catch (error) {
                   console.error("Error creating note:", error)
+                }
+              }}
+              onRename={async (newName) => {
+                const fd = new FormData()
+                fd.append("name", newName)
+                try {
+                  const result = await updateNoteAction(node.id, fd)
+                  if ("error" in result) {
+                    console.error("Failed to rename note:", result.error)
+                  } else {
+                    console.log("Note renamed:", result.success)
+                    mutateFile({
+                      ...node,
+                      name: newName,
+                      children: [],
+                    })
+                  }
+                } catch (error) {
+                  console.error("Error renaming note:", error)
                 }
               }}
             />

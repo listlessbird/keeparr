@@ -40,6 +40,7 @@ export function ClickToEdit({
             rest.onBlur?.(e)
           }}
           autoFocus
+          className="h-auto rounded-none border-x-0 border-b-2 border-t-0 bg-transparent focus-visible:ring-transparent"
         />
       ) : (
         renderReader(value, startEditing)

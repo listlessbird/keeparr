@@ -19,12 +19,15 @@ export type ApiNoteFields = {
 
 export type ApiNoteByUser = Record<ApiNoteFields["id"], ApiNoteFields>
 
-export type ApiNoteById = {
+type ApiNoteById = {
   id: string
   name: string
   blocks: Block[]
 }
 
+type ApiNotesModified = ApiNoteFields
+
 export type ApiNotesDirectoryResponse = ApiResponse<ApiNotesDirectoryCreated>
 export type ApiNotesByUserResponse = ApiResponse<ApiNoteByUser>
 export type ApiNoteByIdResponse = ApiResponse<ApiNoteById>
+export type ApiNotesModifiedResponse = ApiResponse<ApiNotesModified>

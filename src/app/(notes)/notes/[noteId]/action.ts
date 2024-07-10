@@ -73,3 +73,56 @@ export async function createNoteAction(formData: FormData) {
     return { error: "An unexpected error occurred" }
   }
 }
+
+const updateNoteSchema = z
+  .object({
+    name: z.string().min(1).max(16).optional(),
+    // nullable is required to allow the value to be null which is what the form sends
+    blocks: z.array(z.record(z.any())).optional().nullable(),
+  })
+  .refine((data) => data.name !== undefined || data.blocks !== undefined, {
+    message: "Either name or blocks must be provided",
+  })
+
+export async function updateNoteAction(noteId: string, formData: FormData) {
+  const rawData = {
+    name: formData.get("name"),
+    blocks: JSON.parse(formData.get("blocks") as string),
+  }
+
+  const validationResult = updateNoteSchema.safeParse(rawData)
+
+  if (!validationResult.success) {
+    return { error: validationResult.error.flatten() }
+  }
+
+  const { name, blocks } = validationResult.data
+
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}notes/${noteId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `auth_session=${cookies().get("auth_session")?.value}`,
+        },
+        method: "PUT",
+        body: JSON.stringify({ name, blocks }),
+      },
+    )
+
+    if (!res.ok) {
+      throw new Error("Failed to update note")
+    }
+
+    const json: NOTESAPITYPES.ApiNotesModifiedResponse = await res.json()
+
+    if (!json.success) {
+      return { error: json.error }
+    }
+
+    return { success: json.data }
+  } catch (error) {
+    return { error: "An unexpected error occurred" }
+  }
+}
