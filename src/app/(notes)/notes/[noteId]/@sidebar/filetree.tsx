@@ -233,57 +233,59 @@ export function SidebarFileTree({ tree }: { tree: FileTree }) {
       onSelectChange={select}
     >
       <ScrollArea className="h-[800px] rounded-md border p-4 lg:h-[85vh]">
-        {nodes.map((node) => (
-          <TreeView.Node
-            node={node}
-            key={node.id}
-            className="text-gray-700 dark:text-gray-300"
-          >
-            <TreeItem
+        <div className="space-y-2">
+          {nodes.map((node) => (
+            <TreeView.Node
               node={node}
-              Icon={node.type === "folder" ? Folder : File}
-              onCreated={async (node) => {
-                const formData = new FormData()
-                formData.append("name", node.name)
-                formData.append("blocks", JSON.stringify(DefaultNoteBlock))
+              key={node.id}
+              className="text-gray-700 dark:text-gray-300"
+            >
+              <TreeItem
+                node={node}
+                Icon={node.type === "folder" ? Folder : File}
+                onCreated={async (node) => {
+                  const formData = new FormData()
+                  formData.append("name", node.name)
+                  formData.append("blocks", JSON.stringify(DefaultNoteBlock))
 
-                try {
-                  const result = await createNoteAction(formData)
-                  if ("error" in result) {
-                    console.error("Failed to create note:", result.error)
-                  } else {
-                    console.log("Note created:", result.success)
-                    mutateFile({
-                      ...node,
-                      children: [],
-                    })
+                  try {
+                    const result = await createNoteAction(formData)
+                    if ("error" in result) {
+                      console.error("Failed to create note:", result.error)
+                    } else {
+                      console.log("Note created:", result.success)
+                      mutateFile({
+                        ...node,
+                        children: [],
+                      })
+                    }
+                  } catch (error) {
+                    console.error("Error creating note:", error)
                   }
-                } catch (error) {
-                  console.error("Error creating note:", error)
-                }
-              }}
-              onRename={async (newName) => {
-                const fd = new FormData()
-                fd.append("name", newName)
-                try {
-                  const result = await updateNoteAction(node.id, fd)
-                  if ("error" in result) {
-                    console.error("Failed to rename note:", result.error)
-                  } else {
-                    console.log("Note renamed:", result.success)
-                    mutateFile({
-                      ...node,
-                      name: newName,
-                      children: [],
-                    })
+                }}
+                onRename={async (newName) => {
+                  const fd = new FormData()
+                  fd.append("name", newName)
+                  try {
+                    const result = await updateNoteAction(node.id, fd)
+                    if ("error" in result) {
+                      console.error("Failed to rename note:", result.error)
+                    } else {
+                      console.log("Note renamed:", result.success)
+                      mutateFile({
+                        ...node,
+                        name: newName,
+                        children: [],
+                      })
+                    }
+                  } catch (error) {
+                    console.error("Error renaming note:", error)
                   }
-                } catch (error) {
-                  console.error("Error renaming note:", error)
-                }
-              }}
-            />
-          </TreeView.Node>
-        ))}
+                }}
+              />
+            </TreeView.Node>
+          ))}
+        </div>
       </ScrollArea>
     </TreeView.Root>
   )

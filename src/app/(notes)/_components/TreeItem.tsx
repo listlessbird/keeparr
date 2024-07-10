@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react"
 
+import { cn } from "@/lib/utils"
 import { ClickToEdit } from "@/components/click-to-edit"
 import { FileTreeItemAttr } from "@/app/(notes)/notes/[noteId]/@sidebar/filetree"
 
@@ -13,7 +14,13 @@ type TreeItemProps = {
   onRename?: (newName: string) => void
 }
 
-export function TreeItem({ Icon, node, onCreated, onRename }: TreeItemProps) {
+export function TreeItem({
+  Icon,
+  node,
+  onCreated,
+  onRename,
+  ...props
+}: TreeItemProps & React.HTMLAttributes<HTMLDivElement>) {
   const itemRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -27,7 +34,12 @@ export function TreeItem({ Icon, node, onCreated, onRename }: TreeItemProps) {
   }, [itemRef, onCreated, node.fresh])
 
   return (
-    <div className="flex max-w-[150px] items-center justify-center space-x-2">
+    <div
+      className={cn(
+        "flex max-w-[150px] items-center justify-center space-x-2",
+        props.className,
+      )}
+    >
       <Icon className="size-5 text-blue-500" />
       <ClickToEdit
         initialValue={node.name}
