@@ -5,10 +5,12 @@ import { BlockNoteView, useCreateBlockNote, type Theme } from "@blocknote/react"
 import "@blocknote/core/fonts/inter.css"
 import "@blocknote/react/style.css"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { usePathname } from "next/navigation"
 import { Block } from "@blocknote/core"
 import { useTheme } from "next-themes"
+
+import { useNoteEditorInstance } from "@/app/(notes)/hooks/useEditorInstance"
 
 import { iDBPutNote, useIDB } from "../notes/[noteId]/indexeddb"
 import { useNotes } from "../notes/providers"
@@ -16,38 +18,49 @@ import { useNotes } from "../notes/providers"
 type NotesPlayGroundProps = {
   initialContent?: Block[]
 }
+
+const SAVE_INTERVAL = 10 * 1000
+
 export function NotePlayGround({ initialContent }: NotesPlayGroundProps) {
   const editor = useCreateBlockNote({ initialContent })
   const { theme } = useTheme()
   const [blocks, setBlocks] = useState<Block[]>(initialContent || [])
   const { db } = useIDB()
   const pathname = usePathname()
+  const { setEditorInstance } = useNoteEditorInstance()
 
-  const currentDocId = pathname.split("/").pop()
+  const currentDocId = useMemo(() => pathname?.split("/").pop(), [pathname])
 
   const { notes } = useNotes()
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentDocId) {
-        const note = notes.get(currentDocId)
-        if (note) {
-          note.noteBlocks = blocks
-          note.setUpdated()
-          notes.set(currentDocId, note)
-          if (db) {
-            iDBPutNote(note, db).then(() => {
-              console.log(`Note ${currentDocId} updated`)
-            })
-          }
-        }
-      }
-    }, 10 * 1000)
+    setEditorInstance(editor)
+  }, [editor, setEditorInstance])
 
-    return () => {
-      clearInterval(interval)
-    }
-  }, [notes, currentDocId, blocks, db])
+  const updateNote = useCallback(() => {
+    if (!currentDocId || !db) return
+
+    const note = notes.get(currentDocId)
+    if (!note) return
+
+    note.noteBlocks = blocks
+    note.setUpdated()
+    notes.set(currentDocId, note)
+
+    iDBPutNote(note, db)
+      .then(() => console.log(`[IndexedDB] Note ${currentDocId} updated`))
+      .catch((error) =>
+        console.error(
+          `[IndexedDB] Failed to update note ${currentDocId}:`,
+          error,
+        ),
+      )
+  }, [currentDocId, db, notes, blocks])
+
+  useEffect(() => {
+    const interval = setInterval(updateNote, SAVE_INTERVAL)
+    return () => clearInterval(interval)
+  }, [updateNote])
 
   return (
     <div className="flex-auto dark:bg-[#1f1f1f]">

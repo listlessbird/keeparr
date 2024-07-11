@@ -6,7 +6,7 @@ const Playground = dynamic(
   () =>
     import("../../_components/note-playground").then((d) => d.NotePlayGround),
   {
-    ssr: false,
+    ssr: true,
     loading: () => <div>Loading...</div>,
   },
 )
