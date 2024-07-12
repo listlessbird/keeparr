@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useCallback, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { Menu, Save } from "lucide-react"
 
@@ -8,18 +8,20 @@ import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { Button } from "@/components/ui/button"
 import { Iconify } from "@/components/iconify"
+import { useCurrentNote } from "@/app/(notes)/hooks/useCurrentNote"
 import { useNoteEditorInstance } from "@/app/(notes)/hooks/useEditorInstance"
 import { useEditorSyncState } from "@/app/(notes)/hooks/useEditorSyncState"
+import { useNotes } from "@/app/(notes)/hooks/useNotes"
 import { useNotesLayoutState } from "@/app/(notes)/notes/providers"
 
 export function NotesNav({}: {}) {
   const { isMobile } = useMediaQuery()
 
-  const { inSync } = useEditorSyncState()
+  const { syncStatus, manualSave } = useEditorSyncState()
 
-  useEffect(() => {
-    console.log({ inSync })
-  }, [inSync])
+  const currentNote = useCurrentNote()
+
+  const { saveNoteToIDB } = useNotes()
 
   const { isExpanded, setIsExpanded } = useNotesLayoutState()
 
@@ -33,6 +35,18 @@ export function NotesNav({}: {}) {
     },
     [isMobile, setIsExpanded],
   )
+
+  // const handleSaveNote = useCallback(() => {
+  //   if (!currentNote) {
+  //     console.error("No current note")
+  //     return
+  //   }
+
+  //   console.debug("Saving note to IDB", currentNote.blocks)
+
+  //   saveNoteToIDB(currentNote)
+  //   setInSync(true)
+  // }, [saveNoteToIDB, currentNote, setInSync])
 
   return (
     <header
@@ -56,18 +70,19 @@ export function NotesNav({}: {}) {
             variant={"icon"}
             size={"icon"}
             className={cn("relative", {
-              "after:absolute after:inset-[7px_10px_auto_auto] after:block after:size-2 after:rounded-full dark:text-white/50 after:dark:bg-white/80":
-                !inSync,
+              "after:absolute after:inset-[7px_10px_auto_auto] after:block after:size-2 after:rounded-full after:bg-yellow-400":
+                syncStatus === "unsynced",
+              "after:bg-green-400": syncStatus === "synced",
+              "after:animate-pulse": syncStatus === "saving",
             })}
+            disabled={syncStatus === "synced" || syncStatus === "saving"}
+            onClick={manualSave}
           >
             <Save
               size={24}
-              className={cn(
-                "relative size-6 cursor-pointer bg-transparent hover:bg-transparent dark:text-white",
-                {
-                  " dark:text-white/50": !inSync,
-                },
-              )}
+              // className={cn(
+              //   "relative size-6 cursor-pointer bg-transparent hover:bg-transparent dark:text-white/10",
+              // )}
             />
           </Button>
           <Button variant={"icon"} size={"icon"}>

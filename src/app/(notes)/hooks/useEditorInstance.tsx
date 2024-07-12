@@ -3,6 +3,7 @@ import {
   Dispatch,
   ReactNode,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react"
@@ -20,6 +21,10 @@ export function NoteEditorProvider({ children }: { children: ReactNode }) {
   const [editorInstance, setEditorInstance] = useState<BlockNoteEditor | null>(
     null,
   )
+
+  useEffect(() => {
+    console.log(`Editor instance:`, editorInstance)
+  }, [editorInstance])
 
   const value = useMemo(
     () => ({
