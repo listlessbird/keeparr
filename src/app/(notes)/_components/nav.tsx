@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import { Menu, Save } from "lucide-react"
 
@@ -66,7 +66,7 @@ export function NotesNav({}: {}) {
           <Menu size={24} className="fill-[#888888]" />
         </Button>
         <div className="flex items-center justify-center gap-2 dark:text-white">
-          <Button
+          {/* <Button
             variant={"icon"}
             size={"icon"}
             className={cn("relative", {
@@ -84,7 +84,8 @@ export function NotesNav({}: {}) {
               //   "relative size-6 cursor-pointer bg-transparent hover:bg-transparent dark:text-white/10",
               // )}
             />
-          </Button>
+          </Button> */}
+          <SyncButton syncStatus={syncStatus} manualSave={manualSave} />
           <Button variant={"icon"} size={"icon"}>
             <Iconify
               icon="codicon:open-preview"
@@ -94,5 +95,49 @@ export function NotesNav({}: {}) {
         </div>
       </nav>
     </header>
+  )
+}
+
+function SyncButton({
+  syncStatus,
+  manualSave,
+}: {
+  syncStatus: "unsynced" | "synced" | "saving"
+  manualSave: () => void
+}) {
+  const [animateSync, setAnimateSync] = useState(false)
+
+  useEffect(() => {
+    if (syncStatus === "saving") {
+      setAnimateSync(true)
+    } else {
+      setAnimateSync(false)
+    }
+  }, [syncStatus])
+
+  return (
+    <Button
+      variant="icon"
+      size="icon"
+      className={cn("relative", {
+        "after:absolute after:inset-[7px_10px_auto_auto] after:block after:size-2 after:rounded-full":
+          true,
+        "after:bg-yellow-400": syncStatus === "unsynced",
+        "after:bg-green-400": syncStatus === "synced",
+        "after:bg-blue-400": syncStatus === "saving",
+        "after:animate-pulse": animateSync,
+      })}
+      disabled={syncStatus === "synced" || syncStatus === "saving"}
+      onClick={manualSave}
+    >
+      <Save
+        size={24}
+        className={cn("transition-colors", {
+          "text-yellow-500": syncStatus === "unsynced",
+          "text-green-500": syncStatus === "synced",
+          "text-blue-500": syncStatus === "saving",
+        })}
+      />
+    </Button>
   )
 }
