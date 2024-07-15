@@ -1,7 +1,6 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { usePathname } from "next/navigation"
 import { Menu, Save } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -9,7 +8,6 @@ import { useMediaQuery } from "@/hooks/use-media-query"
 import { Button } from "@/components/ui/button"
 import { Iconify } from "@/components/iconify"
 import { useCurrentNote } from "@/app/(notes)/hooks/useCurrentNote"
-import { useNoteEditorInstance } from "@/app/(notes)/hooks/useEditorInstance"
 import { useEditorSyncState } from "@/app/(notes)/hooks/useEditorSyncState"
 import { useNotes } from "@/app/(notes)/hooks/useNotes"
 import { useNotesLayoutState } from "@/app/(notes)/notes/providers"

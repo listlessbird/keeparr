@@ -14,9 +14,8 @@ import { Separator } from "@/components/ui/separator"
 import Typography from "@/components/ui/typography"
 import { DashboardActionButton } from "@/app/_components/DashboardActionButton"
 import { DefaultNoteBlock } from "@/app/(notes)/blocks"
+import { useNotes } from "@/app/(notes)/hooks/useNotes"
 import { createNoteAction } from "@/app/(notes)/notes/[noteId]/action"
-
-import { useNotes } from "./providers"
 
 export function NotesRoot() {
   const { isMobile } = useMediaQuery()

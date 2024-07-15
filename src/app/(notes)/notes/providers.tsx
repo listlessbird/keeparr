@@ -17,7 +17,6 @@ import { IDBProvider, iDBPutNote, useIDB } from "@/app/(notes)/hooks/useIDB"
 import { NotesStateProvider } from "@/app/(notes)/hooks/useNotes"
 
 import { FileTreeProvider } from "./[noteId]/@sidebar/filetree"
-import { useGetNotes } from "./query"
 
 function makeQueryClient() {
   return new QueryClient({
