@@ -15,7 +15,7 @@ import Typography from "@/components/ui/typography"
 import { DashboardActionButton } from "@/app/_components/DashboardActionButton"
 import { DefaultNoteBlock } from "@/app/(notes)/blocks"
 import { useNotes } from "@/app/(notes)/hooks/useNotes"
-import { createNoteAction } from "@/app/(notes)/notes/[noteId]/action"
+import { createNoteAction } from "@/app/(notes)/notes/action"
 
 export function NotesRoot() {
   const { isMobile } = useMediaQuery()

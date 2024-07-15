@@ -16,7 +16,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { IDBProvider, iDBPutNote, useIDB } from "@/app/(notes)/hooks/useIDB"
 import { NotesStateProvider } from "@/app/(notes)/hooks/useNotes"
 
-import { FileTreeProvider } from "./[noteId]/@sidebar/filetree"
+import { FileTreeProvider } from "./(editor)/@sidebar/filetree"
 
 function makeQueryClient() {
   return new QueryClient({

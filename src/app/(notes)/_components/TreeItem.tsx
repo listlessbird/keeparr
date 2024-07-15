@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useTransition } from "react"
+import { useRouter } from "next/navigation"
 
 import { cn } from "@/lib/utils"
 import { ClickToEdit } from "@/components/click-to-edit"
-import { FileTreeItemAttr } from "@/app/(notes)/notes/[noteId]/@sidebar/filetree"
+import { FileTreeItemAttr } from "@/app/(notes)/notes/(editor)/@sidebar/filetree"
 
 type TreeItemProps = {
   node: Omit<FileTreeItemAttr, "children"> & { fresh?: boolean }
@@ -22,6 +23,9 @@ export function TreeItem({
   ...props
 }: TreeItemProps & React.HTMLAttributes<HTMLDivElement>) {
   const itemRef = useRef<HTMLDivElement>(null)
+
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
 
   useEffect(() => {
     const refItem = itemRef.current
@@ -71,6 +75,11 @@ export function TreeItem({
             }}
             ref={itemRef}
             className="min-w-0 flex-1"
+            onClick={() => {
+              startTransition(() => {
+                router.push(`/notes/${node.id}`)
+              })
+            }}
           >
             <span
               className="block font-medium text-gray-700 dark:text-gray-300 lg:truncate"

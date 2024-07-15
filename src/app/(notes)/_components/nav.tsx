@@ -121,7 +121,7 @@ function SyncButton({
         "after:absolute after:inset-[7px_10px_auto_auto] after:block after:size-2 after:rounded-full":
           true,
         "after:bg-yellow-400": syncStatus === "unsynced",
-        "after:bg-green-400": syncStatus === "synced",
+        // "after:bg-green-400": syncStatus === "synced",
         "after:bg-blue-400": syncStatus === "saving",
         "after:animate-pulse": animateSync,
       })}

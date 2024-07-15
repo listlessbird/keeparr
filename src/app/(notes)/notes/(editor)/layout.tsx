@@ -1,5 +1,6 @@
-import { NotesNav } from "../../_components/nav"
-import { NotesLayout as Wrapper } from "../../_components/notes-layout"
+import { NotesNav } from "@/app/(notes)/_components/nav"
+import { NotesLayout as Wrapper } from "@/app/(notes)/_components/notes-layout"
+
 import { Providers } from "./providers"
 
 export default function NotesLayout({
