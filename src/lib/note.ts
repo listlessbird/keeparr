@@ -38,8 +38,20 @@ export class Note {
     this.name = name
   }
 
+  get noteBlocks() {
+    return this.blocks
+  }
+
+  set noteBlocks(blocks: Block[]) {
+    this.blocks = blocks
+  }
+
   getBlockLength() {
     return this.blocks.length
+  }
+
+  setUpdated() {
+    this.meta.updatedAt = new Date()
   }
 }
 

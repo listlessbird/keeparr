@@ -20,8 +20,8 @@ const Playground = dynamic(
   },
 )
 
-function Note({ noteId }: { noteId: string }) {
-  const { data, isLoading } = useGetNoteById(noteId)
+export function Note({ noteId }: { noteId: string }) {
+  const { data, isSuccess, isLoading } = useGetNoteById(noteId)
 
   return (
     <>
@@ -29,12 +29,4 @@ function Note({ noteId }: { noteId: string }) {
       {isLoading && <Playground initialContent={LOADING_BLOCKS} />}
     </>
   )
-}
-
-export default function Page({
-  params: { noteId },
-}: {
-  params: { noteId: string }
-}) {
-  return <Note noteId={noteId} />
 }
