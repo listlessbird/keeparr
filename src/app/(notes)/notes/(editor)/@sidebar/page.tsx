@@ -24,8 +24,6 @@ export default function Sidebar() {
     queryFn: () => constructFileItemsAction(),
   })
 
-  const [c, setC] = useState(0)
-
   useEffect(() => {
     if (data) {
       setTree(data)
@@ -34,12 +32,6 @@ export default function Sidebar() {
 
   return (
     <NotesSidebar>
-      <div>
-        <pre className="text-white">
-          {JSON.stringify({ count: c }, null, 2)}
-        </pre>
-        <button onClick={() => setC((prev) => prev + 10)}>Increment</button>
-      </div>
       <div className="flex gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
