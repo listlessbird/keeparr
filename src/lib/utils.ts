@@ -1,4 +1,4 @@
-import { type ClassValue, clsx } from "clsx"
+import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -19,4 +19,25 @@ export function getInitials(fullName: string) {
     return acc
   }, "")
   return initials
+}
+
+export function isValidReturnPath(path: string): boolean {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http"
+  try {
+    const url = new URL(path, baseUrl)
+
+    if (!path.startsWith("/")) return false
+
+    if (url.protocol !== `${protocol}:` || url.host !== baseUrl.split("://")[1])
+      return false
+
+    // Optional: Add whitelist of allowed paths
+    const allowedPaths = ["/dashboard", "/notes"]
+    return (
+      path === "/" || allowedPaths.some((allowed) => path.startsWith(allowed))
+    )
+  } catch {
+    return false
+  }
 }

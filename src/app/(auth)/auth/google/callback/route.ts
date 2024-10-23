@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
   const state = url.searchParams.get("state")
   const storedState = cookies().get("google_oauth_state")?.value ?? null
   const codeVerifier = cookies().get("google_code_verifier")?.value ?? null
+  const returnPath = cookies().get("return_to")?.value ?? "/"
 
   if (
     code === null ||
@@ -44,11 +45,17 @@ export async function GET(request: NextRequest) {
   const claims = decodeIdToken(tokens.idToken()) as any
 
   console.table(claims)
+  console.log({ returnPath })
+
   const googleUserId = claims?.sub
   const username = claims?.name
   const picture = claims?.picture
   const email = claims?.email
   const existingUser = await getUserFromGoogleId(googleUserId)
+
+  cookies().set("google_oauth_state", "", { maxAge: 0 })
+  cookies().set("google_code_verifier", "", { maxAge: 0 })
+  cookies().set("return_path", "", { maxAge: 0 })
 
   if (existingUser !== null) {
     const sessionToken = generateSessionToken()
@@ -57,7 +64,7 @@ export async function GET(request: NextRequest) {
     return new Response(null, {
       status: 302,
       headers: {
-        Location: "/",
+        Location: returnPath,
       },
     })
   }
@@ -76,7 +83,7 @@ export async function GET(request: NextRequest) {
   return new Response(null, {
     status: 302,
     headers: {
-      Location: "/",
+      Location: returnPath,
     },
   })
 }

@@ -1,9 +1,10 @@
 import { cookies } from "next/headers"
+import { NextRequest } from "next/server"
 import { generateCodeVerifier, generateState } from "arctic"
 
 import { google } from "@/lib/auth"
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const state = generateState()
   const codeVerifier = generateCodeVerifier()
   const url = google.createAuthorizationURL(state, codeVerifier, [
