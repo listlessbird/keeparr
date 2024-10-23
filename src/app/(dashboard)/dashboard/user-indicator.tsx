@@ -72,10 +72,10 @@ export function WelcomeMessage() {
 
   return (
     <>
-      <Typography variant={"h3"} className="w-fit text-center">
+      <Typography variant={"h3"} className="w-fit">
         Welcome to your dashboard {user?.username},
       </Typography>
-      <Typography variant={"h4"} className="w-fit text-center">
+      <Typography variant={"h4"} className="w-fit">
         What would you like to do today?
       </Typography>
     </>
