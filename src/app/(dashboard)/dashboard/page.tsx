@@ -1,16 +1,11 @@
 import { Bookmark, Brush, List, NotebookPen, Plus } from "lucide-react"
 
-import { getSession } from "@/lib/auth"
 import { getRandomDark } from "@/lib/utils"
-import { Separator } from "@/components/ui/separator"
-import Typography from "@/components/ui/typography"
 import { DashboardActionButton } from "@/app/_components/DashboardActionButton"
 
 import { UserIndicator, WelcomeMessage } from "./user-indicator"
 
 export default async function Dashboard() {
-  // TODO: Make this stable across a session.
-  // Maybe use a cookie or something to store the color
   const UserIndicatorColor = getRandomDark()
   const iconSize = 20
 
