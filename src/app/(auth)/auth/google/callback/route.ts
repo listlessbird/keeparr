@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   const state = url.searchParams.get("state")
   const storedState = cookies().get("google_oauth_state")?.value ?? null
   const codeVerifier = cookies().get("google_code_verifier")?.value ?? null
-  const returnPath = cookies().get("return_to")?.value ?? "/"
+  const returnPath = cookies().get("return_to")?.value ?? "/dashboard"
 
   if (
     code === null ||
