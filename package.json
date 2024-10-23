@@ -12,7 +12,10 @@
     "test:e2e": "playwright test --ui",
     "format": "prettier --check --ignore-path .gitignore .",
     "format:fix": "prettier --write --ignore-path .gitignore .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:gen": "drizzle-kit generate",
+    "db:mig": "drizzle-kit migrate",
+    "db:stu": "drizzle-kit studio"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.0.4",
@@ -41,7 +44,9 @@
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "drizzle-orm": "^0.35.3",
+    "postgres": "^3.4.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.1.0",
@@ -56,6 +61,7 @@
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10",
+    "drizzle-kit": "^0.26.2",
     "eslint": "^8",
     "eslint-config-next": "latest",
     "eslint-config-prettier": "^9.1.0",

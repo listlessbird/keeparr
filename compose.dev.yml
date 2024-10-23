@@ -1,0 +1,28 @@
+name: keeparr-web
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      # - POSTGRES_DB_FILE=/run/secrets/POSTGRES_DB
+      # - POSTGRES_USER_FILE=/run/secrets/POSTGRES_USER
+      # - POSTGRES_PASSWORD_FILE=/run/secrets/POSTGRES_PASSWORD
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    # secrets:
+    #   - POSTGRES_DB
+    #   - POSTGRES_USER
+    #   - POSTGRES_PASSWORD
+volumes:
+  pg_data:
