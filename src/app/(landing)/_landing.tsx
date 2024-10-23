@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 import { Button } from "@/components/ui/button"
 import Typography from "@/components/ui/typography"
 
@@ -18,7 +20,9 @@ export function Landing() {
           A simple, intuitive, and fast task manager for developers.
         </Typography>
         <div className="flex gap-4">
-          <Button>Get started</Button>
+          <Button asChild>
+            <Link href={"/dashboard"}>Get started</Link>
+          </Button>
           <Button variant="secondary">Learn more</Button>
         </div>
       </section>

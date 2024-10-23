@@ -1,11 +1,12 @@
 "use client"
 
-import { AuthProvider } from "@/hooks/useAuth"
+import { ComponentProps, PropsWithChildren } from "react"
+
+import { SessionProvider } from "@/hooks/use-session"
 
 export function DashboardProviders({
   children,
-}: {
-  children: React.ReactNode
-}) {
-  return <AuthProvider>{children}</AuthProvider>
+  user,
+}: PropsWithChildren<ComponentProps<typeof SessionProvider>["value"]>) {
+  return <SessionProvider value={{ user }}>{children}</SessionProvider>
 }

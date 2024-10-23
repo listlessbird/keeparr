@@ -3,7 +3,7 @@
 import { useMemo } from "react"
 
 import { getInitials } from "@/lib/utils"
-import { useAuth } from "@/hooks/useAuth"
+import { useSession } from "@/hooks/use-session"
 import { Avatar } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -14,9 +14,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Typography from "@/components/ui/typography"
 import { UIAvatar } from "@/components/ui-avatar"
+import { logOut } from "@/app/(auth)/action"
 
 export function UserIndicator({ indicatorColor }: { indicatorColor: string }) {
-  const { user, logout } = useAuth()
+  const { user } = useSession()
 
   const userInitials = useMemo(
     () => getInitials(user?.username || ""),
@@ -54,9 +55,9 @@ export function UserIndicator({ indicatorColor }: { indicatorColor: string }) {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="cursor-pointer focus:bg-red-900"
-            onSelect={(e) => {
+            onSelect={async (e) => {
               e.preventDefault()
-              logout()
+              await logOut()
             }}
           >
             Logout
@@ -68,7 +69,7 @@ export function UserIndicator({ indicatorColor }: { indicatorColor: string }) {
 }
 
 export function WelcomeMessage() {
-  const { user } = useAuth()
+  const { user } = useSession()
 
   return (
     <>

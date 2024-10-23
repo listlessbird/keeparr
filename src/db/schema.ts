@@ -1,3 +1,4 @@
+import { InferSelectModel } from "drizzle-orm"
 import {
   AnyPgColumn,
   pgTable,
@@ -64,3 +65,6 @@ export const notesDirectoryTable = pgTable("notes_directory", {
     .notNull()
     .defaultNow(),
 })
+
+export type User = InferSelectModel<typeof userTable>
+export type Session = InferSelectModel<typeof sessionTable>

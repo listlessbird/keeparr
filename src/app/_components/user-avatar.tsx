@@ -3,7 +3,7 @@
 import { useMemo } from "react"
 
 import { getInitials, getRandomDark } from "@/lib/utils"
-import { useAuth } from "@/hooks/useAuth"
+import { useAuth } from "@/hooks/use-session"
 import { Avatar } from "@/components/ui/avatar"
 import { UIAvatar } from "@/components/ui-avatar"
 
