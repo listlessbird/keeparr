@@ -12,10 +12,10 @@ export function Landing() {
           KeepArr
         </Typography>
         <Typography variant="h2" affects="large">
-          Keep your life organized
+          The perfect brainstorming tool for developers.
         </Typography>
         <Typography variant="p" affects="removePMargin">
-          A simple, intuitive, and fast task manager.
+          A simple, intuitive, and fast task manager for developers.
         </Typography>
         <div className="flex gap-4">
           <Button>Get started</Button>

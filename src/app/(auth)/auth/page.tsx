@@ -1,7 +1,9 @@
 "use client"
-import { auth } from "@/app/(auth)/actions/auth.action"
+
 import { useFormState, useFormStatus } from "react-dom"
+
 import { Button } from "@/components/ui/button"
+import { auth } from "@/app/(auth)/actions/auth.action"
 
 function SubmitButton() {
   const { pending } = useFormStatus()
@@ -24,9 +26,9 @@ export default function Auth() {
 
   return (
     <div>
-      <div className="flex justify-center items-center min-h-[calc(100vh-64px)]">
+      <div className="flex min-h-[calc(100vh-64px)] items-center justify-center">
         <div className="flex flex-col gap-4">
-          <h1 className="text-4xl font-bold text-center">Login</h1>
+          <h1 className="text-center text-4xl font-bold">Login</h1>
           <form className="flex flex-col gap-4" action={formAction}>
             <div className="flex flex-col gap-2">
               <label htmlFor="email">Email</label>
@@ -35,7 +37,7 @@ export default function Auth() {
                 id="email"
                 name="email"
                 placeholder="Email"
-                className="p-2 border border-foreground/60 rounded-md"
+                className="rounded-md border border-foreground/60 p-2"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -45,7 +47,7 @@ export default function Auth() {
                 id="password"
                 name="password"
                 placeholder="Password"
-                className="p-2 border border-foreground/60 rounded-md"
+                className="rounded-md border border-foreground/60 p-2"
                 autoComplete="current-password"
               />
             </div>
