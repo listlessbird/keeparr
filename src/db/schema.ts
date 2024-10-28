@@ -1,4 +1,4 @@
-import { InferSelectModel } from "drizzle-orm"
+import { InferSelectModel, relations } from "drizzle-orm"
 import {
   AnyPgColumn,
   pgTable,
@@ -65,6 +65,48 @@ export const notesDirectoryTable = pgTable("notes_directory", {
     .notNull()
     .defaultNow(),
 })
+
+export const userRelations = relations(userTable, ({ many }) => ({
+  sessions: many(sessionTable),
+  notes: many(notesTable),
+  directories: many(notesDirectoryTable),
+}))
+
+export const sessionRelations = relations(sessionTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [sessionTable.userId],
+    references: [userTable.id],
+  }),
+}))
+
+export const notesRelations = relations(notesTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [notesTable.userId],
+    references: [userTable.id],
+  }),
+  directory: one(notesDirectoryTable, {
+    fields: [notesTable.directoryId],
+    references: [notesDirectoryTable.id],
+  }),
+}))
+
+export const notesDirectoryRelations = relations(
+  notesDirectoryTable,
+  ({ one, many }) => ({
+    user: one(userTable, {
+      fields: [notesDirectoryTable.userId],
+      references: [userTable.id],
+    }),
+    parentDirectory: one(notesDirectoryTable, {
+      fields: [notesDirectoryTable.parentdirectoryId],
+      references: [notesDirectoryTable.id],
+    }),
+    childDirectories: many(notesDirectoryTable, {
+      relationName: "parentChild",
+    }),
+    notes: many(notesTable),
+  }),
+)
 
 export type User = InferSelectModel<typeof userTable>
 export type Session = InferSelectModel<typeof sessionTable>
