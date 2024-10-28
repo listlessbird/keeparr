@@ -3,7 +3,7 @@ import { Bookmark, Brush, List, NotebookPen, Plus } from "lucide-react"
 import { getRandomDark } from "@/lib/utils"
 import { DashboardActionButton } from "@/app/_components/DashboardActionButton"
 
-import { UserIndicator, WelcomeMessage } from "./user-indicator"
+import { UserButton, WelcomeMessage } from "./user-indicator"
 
 export default async function Dashboard() {
   const UserIndicatorColor = getRandomDark()
@@ -11,7 +11,7 @@ export default async function Dashboard() {
 
   return (
     <div className="relative">
-      <UserIndicator indicatorColor={`${UserIndicatorColor}`} />
+      <UserButton />
       <div className="mt-3 space-y-4 p-4 lg:mt-10">
         <WelcomeMessage />
 

@@ -13,8 +13,6 @@ export function DashboardActionButton({
 }: { Icon: ReactNode; text: ReactNode; href?: string } & React.ComponentProps<
   typeof Button
 >) {
-  const customAction = typeof props.onClick === "function"
-  console.log({ customAction, onClick: props.onClick })
   return (
     <div className="flex gap-2">
       <Button
@@ -23,13 +21,11 @@ export function DashboardActionButton({
         // asChild={!customAction}
       >
         <div className="flex  flex-col items-center justify-center gap-0">
-          {!customAction && (
-            <Link href={href ?? "/dashboard"}>
-              {Icon}
+          <Link href={href ?? "/dashboard"}>
+            {Icon}
 
-              <span className="sr-only">{text}</span>
-            </Link>
-          )}
+            <span className="sr-only">{text}</span>
+          </Link>
           {/* {customAction && (
             <div className="flex size-8 flex-col items-center justify-center">
               {Icon}

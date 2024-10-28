@@ -1,10 +1,11 @@
 "use client"
 
 import { useMemo } from "react"
+import Image from "next/image"
 
 import { getInitials } from "@/lib/utils"
 import { useSession } from "@/hooks/use-session"
-import { Avatar } from "@/components/ui/avatar"
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,10 +14,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Typography from "@/components/ui/typography"
-import { UIAvatar } from "@/components/ui-avatar"
 import { logOut } from "@/app/(auth)/action"
 
-export function UserIndicator({ indicatorColor }: { indicatorColor: string }) {
+export function UserButton() {
   const { user } = useSession()
 
   const userInitials = useMemo(
@@ -29,13 +29,7 @@ export function UserIndicator({ indicatorColor }: { indicatorColor: string }) {
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Avatar asChild>
-            <UIAvatar
-              alt={user?.username || ""}
-              text={userInitials}
-              className="text-white"
-              size={48}
-              indicatorColor={indicatorColor}
-            />
+            <AvatarImage src={user?.picture} alt={user?.username} />
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
