@@ -19,8 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@/keeparr-notes/*": ["./src/app/(notes)/notes/*"]
+      "@/keeparr-notes/*": ["./src/app/(notes)/notes/*"],
+      "@/*": ["./src/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
