@@ -23,18 +23,21 @@ const AICompletionCommands = ({
           value="replace"
           onSelect={() => {
             const selection = editor?.view.state.selection
-
-            editor
-              ?.chain()
-              .focus()
-              .insertContentAt(
-                {
-                  from: selection?.from,
-                  to: selection?.to,
-                },
-                completion,
-              )
-              .run()
+            if (selection?.from && selection.to) {
+              editor
+                ?.chain()
+                .focus()
+                .insertContentAt(
+                  {
+                    from: selection.from,
+                    to: selection.to,
+                  },
+                  completion,
+                )
+                .run()
+            } else {
+              console.error("selection is null")
+            }
           }}
         >
           <Check className="size-4 text-muted-foreground" />
@@ -44,12 +47,16 @@ const AICompletionCommands = ({
           className="gap-2 px-4"
           value="insert"
           onSelect={() => {
-            const selection = editor.view.state.selection
-            editor
-              .chain()
-              .focus()
-              .insertContentAt(selection.to + 1, completion)
-              .run()
+            if (editor) {
+              const selection = editor.view.state.selection
+              editor
+                .chain()
+                .focus()
+                .insertContentAt(selection.to + 1, completion)
+                .run()
+            } else {
+              console.error("editor is null")
+            }
           }}
         >
           <TextQuote className="size-4 text-muted-foreground" />

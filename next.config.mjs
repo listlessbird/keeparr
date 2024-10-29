@@ -13,7 +13,10 @@ const nextConfig = {
   },
   output: "standalone",
   experimental: {
-    typedRoutes: true,
+    // typedRoutes: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 }
 

@@ -31,7 +31,7 @@ const templateNotes: Note[] = [
   },
 ]
 
-export function NotesPage() {
+function NotesPage() {
   // dummy for now
   const [recentNotes, setRecentNotes] = useState<Note[]>([
     {

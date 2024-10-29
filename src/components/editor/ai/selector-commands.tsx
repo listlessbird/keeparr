@@ -51,11 +51,15 @@ const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
         {options.map((option) => (
           <CommandItem
             onSelect={(value) => {
-              const slice = editor.state.selection.content()
-              const text = editor.storage.markdown.serializer.serialize(
-                slice.content,
-              )
-              onSelect(text, value)
+              if (editor) {
+                const slice = editor.state.selection.content()
+                const text = editor.storage.markdown.serializer.serialize(
+                  slice.content,
+                )
+                onSelect(text, value)
+              } else {
+                console.error("editor is null")
+              }
             }}
             className="flex gap-2 px-4"
             key={option.value}
@@ -70,10 +74,15 @@ const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
       <CommandGroup heading="Use AI to do more">
         <CommandItem
           onSelect={() => {
-            const pos = editor.state.selection.from
+            if (editor) {
+              const pos = editor.state.selection.from
 
-            const text = getPrevText(editor, pos)
-            onSelect(text, "continue")
+              const text = getPrevText(editor, pos)
+              onSelect(text, "continue")
+            } else {
+              console.error("editor is null")
+              return
+            }
           }}
           value="continue"
           className="gap-2 px-4"

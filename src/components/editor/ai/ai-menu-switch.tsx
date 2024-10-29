@@ -23,13 +23,17 @@ const GenerativeMenuSwitch = ({
   const { editor } = useEditor()
 
   useEffect(() => {
-    if (!open) removeAIHighlight(editor)
-  }, [open])
+    if (!open && editor) removeAIHighlight(editor!)
+  }, [open, editor])
   return (
     <EditorBubble
       tippyOptions={{
         placement: open ? "bottom-start" : "top",
         onHidden: () => {
+          if (!editor) {
+            console.error("editor is null")
+            return
+          }
           onOpenChange(false)
           editor.chain().unsetHighlight().run()
         },
