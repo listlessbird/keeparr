@@ -1,24 +1,42 @@
-# KeepArr
+# Keeparr
 
-This project is not related to the **ARR** stack.
+Unified workspace for everyone
 
-TODO
+## Prerequisites
+
+- [Bun](https://bun.sh/) (v1.0 or higher)
+- [Docker](https://www.docker.com/) (for development database)
+- [Node.js](https://nodejs.org/) (v18 or higher)
 
 ## Installation
 
-This project uses [bun](https://bun.sh/)
+The project is currently working in progress but you can
 
-```bash
-bun install
-bun dev
-```
+1. Clone the repository:
+
+2. Install dependencies:
+
+   ```bash
+   bun install
+   ```
+
+3. Set up environment variables:
+
+   ```bash
+    cp .env.example .env
+   ```
+
+4. Start the development server
+
+   this will also start the docker containers
+
+   ```bash
+   bun dev
+   ```
 
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
+Pull requests are welcome.
 
 ## License
 
