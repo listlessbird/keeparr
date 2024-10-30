@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
+import { createNewNoteAction } from "@/keeparr-notes/actions/action"
 import { Menu, MoreVertical, Plus, Search } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -78,25 +79,26 @@ function NotesPage() {
             </div>
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
               {templateNotes.map((note) => (
-                <Button key={note.id} asChild onClick={() => {}}>
-                  <Card
-                    key={note.id}
-                    className="cursor-pointer transition-colors hover:bg-accent"
-                  >
-                    <CardContent className="p-0">
-                      <Image
-                        src={note.thumbnail}
-                        alt={note.title}
-                        className="h-32 w-full object-cover"
-                        width={240}
-                        height={240}
-                      />
-                    </CardContent>
-                    <CardFooter className="p-2">
-                      <p className="text-sm">{note.title}</p>
-                    </CardFooter>
-                  </Card>
-                </Button>
+                <Card
+                  key={note.id}
+                  className="cursor-pointer transition-colors hover:bg-accent"
+                  onClick={async () => {
+                    await createNewNoteAction()
+                  }}
+                >
+                  <CardContent className="p-0">
+                    <Image
+                      src={note.thumbnail}
+                      alt={note.title}
+                      className="h-32 w-full object-cover"
+                      width={240}
+                      height={240}
+                    />
+                  </CardContent>
+                  <CardFooter className="p-2">
+                    <p className="text-sm">{note.title}</p>
+                  </CardFooter>
+                </Card>
               ))}
             </div>
           </section>

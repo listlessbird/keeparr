@@ -33,7 +33,7 @@ export const notesTable = pgTable("notes", {
     .references(() => userTable.id),
   title: text("title"),
   directoryId: uuid("directory_id").references(() => notesDirectoryTable.id),
-  s3_key: text("s3_path"),
+  s3key: text("s3_path"),
   createdAt: timestamp("created_at", {
     withTimezone: true,
     mode: "date",
@@ -100,9 +100,10 @@ export const notesDirectoryRelations = relations(
     parentDirectory: one(notesDirectoryTable, {
       fields: [notesDirectoryTable.parentdirectoryId],
       references: [notesDirectoryTable.id],
+      relationName: "directoryRelation",
     }),
     childDirectories: many(notesDirectoryTable, {
-      relationName: "parentChild",
+      relationName: "directoryRelation",
     }),
     notes: many(notesTable),
   }),
