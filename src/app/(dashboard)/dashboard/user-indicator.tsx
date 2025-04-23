@@ -66,13 +66,13 @@ export function WelcomeMessage() {
   const { user } = useSession()
 
   return (
-    <>
-      <Typography variant={"h3"} className="w-fit">
-        Welcome to your dashboard {user?.username},
+    <div className="space-y-2">
+      <Typography variant={"h3"} className="text-3xl font-bold text-primary">
+        Welcome, {user?.username}
       </Typography>
-      <Typography variant={"h4"} className="w-fit">
+      <Typography variant={"p"} className="text-lg text-muted-foreground">
         What would you like to do today?
       </Typography>
-    </>
+    </div>
   )
 }

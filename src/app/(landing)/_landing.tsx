@@ -21,7 +21,9 @@ export function Landing() {
         </Typography>
         <div className="flex gap-4">
           <Button asChild>
-            <Link href={"/dashboard"}>Get started</Link>
+            <Link href={"/dashboard"} className="text-white">
+              Get started
+            </Link>
           </Button>
           <Button variant="secondary">Learn more</Button>
         </div>
