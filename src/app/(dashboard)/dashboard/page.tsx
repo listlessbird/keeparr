@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Bookmark, Brush, List, NotebookPen, Plus } from "lucide-react"
+import { Bookmark, Brush, List, NotebookPen, Play, Plus } from "lucide-react"
 
 import { getRandomDark } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -30,13 +30,13 @@ export default async function Dashboard() {
             <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary hover:shadow-md">
               <CardHeader className="flex flex-row items-center gap-3 bg-gradient-to-br from-primary/80 to-primary px-6 py-4">
                 <div className="rounded-full bg-white/20 p-2">
-                  <Plus size={iconSize} className="text-white" />
+                  <Play size={iconSize} className="text-white" />
                 </div>
-                <CardTitle className="text-white">Create</CardTitle>
+                <CardTitle className="text-white">Continue</CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <CardDescription className="text-base">
-                  Start a new project or document from scratch
+                  Continue working on your last project
                 </CardDescription>
               </CardContent>
             </Card>
