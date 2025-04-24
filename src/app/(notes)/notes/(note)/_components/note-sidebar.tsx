@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { CreateNoteButton } from "@/keeparr-notes/create-new-note-btn"
 import {
   Clock,
   FileText,
@@ -40,13 +41,13 @@ export function NoteSidebar() {
               Notes
             </Button>
           </Link>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Settings className="h-4 w-4" />
+          <Button variant="ghost" size="icon" className="size-8">
+            <Settings className="size-4" />
           </Button>
         </div>
 
         <div className="relative px-3 py-2">
-          <Search className="absolute left-5 top-[14px] h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-5 top-[14px] size-4 text-muted-foreground" />
           <Input placeholder="Search notes..." className="pl-8" />
         </div>
 
@@ -59,7 +60,7 @@ export function NoteSidebar() {
                 className="w-full justify-start"
                 size="sm"
               >
-                <FileText className="mr-2 h-4 w-4" />
+                <FileText className="mr-2 size-4" />
                 All Notes
               </Button>
               <Button
@@ -67,7 +68,7 @@ export function NoteSidebar() {
                 className="w-full justify-start"
                 size="sm"
               >
-                <Clock className="mr-2 h-4 w-4" />
+                <Clock className="mr-2 size-4" />
                 Recent
               </Button>
               <Button
@@ -75,7 +76,7 @@ export function NoteSidebar() {
                 className="w-full justify-start"
                 size="sm"
               >
-                <Star className="mr-2 h-4 w-4" />
+                <Star className="mr-2 size-4" />
                 Starred
               </Button>
               <Button
@@ -83,7 +84,7 @@ export function NoteSidebar() {
                 className="w-full justify-start"
                 size="sm"
               >
-                <Tag className="mr-2 h-4 w-4" />
+                <Tag className="mr-2 size-4" />
                 Tags
               </Button>
               <Button
@@ -91,7 +92,7 @@ export function NoteSidebar() {
                 className="w-full justify-start"
                 size="sm"
               >
-                <List className="mr-2 h-4 w-4" />
+                <List className="mr-2 size-4" />
                 To-do Lists
               </Button>
             </div>
@@ -107,7 +108,7 @@ export function NoteSidebar() {
                       className="w-full justify-start text-left"
                       size="sm"
                     >
-                      <div className="mr-2 h-4 w-4 flex-shrink-0 rounded-full bg-muted" />
+                      <div className="mr-2 size-4 shrink-0 rounded-full bg-muted" />
                       <span className="truncate">{note.title}</span>
                       <span className="ml-auto text-xs text-muted-foreground">
                         {note.date}
@@ -130,7 +131,7 @@ export function NoteSidebar() {
                     size="sm"
                   >
                     <span
-                      className={`h-2 w-2 rounded-full ${tag.color} mr-2`}
+                      className={`mr-2 size-2 rounded-full ${tag.color}`}
                     ></span>
                     {tag.name}
                   </Button>
@@ -141,9 +142,7 @@ export function NoteSidebar() {
         </ScrollArea>
 
         <div className="border-t p-3">
-          <Button size="sm" className="w-full" onClick={() => {}}>
-            <Plus className="mr-2 h-4 w-4" /> New Note
-          </Button>
+          <CreateNoteButton />
         </div>
       </div>
     </Sidebar>

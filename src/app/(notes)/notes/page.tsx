@@ -18,9 +18,10 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UserButton } from "@/app/(dashboard)/dashboard/user-indicator"
+
+import { CreateNoteButton } from "./create-new-note-btn"
 
 export default function Page() {
   return <NotesPage />
@@ -31,7 +32,6 @@ interface Note {
   title: string
   lastEdited: string
   content?: string
-  thumbnail: string
   starred?: boolean
   tags?: string[]
 }
@@ -41,19 +41,16 @@ const templateNotes = [
     id: "t1",
     title: "Blank note",
     description: "Start with a clean slate",
-    thumbnail: "/notes.png",
   },
   {
     id: "t2",
     title: "To-do list",
     description: "Stay organized with tasks",
-    thumbnail: "/notes.png",
   },
   {
     id: "t3",
     title: "Meeting notes",
     description: "Capture important discussions",
-    thumbnail: "/notes.png",
   },
 ]
 
@@ -125,7 +122,6 @@ function NotesPage() {
       title: "Work Notes",
       lastEdited: "Edited Oct 26",
       content: "Project deadlines and meeting summaries...",
-      thumbnail: "/notes.png",
       starred: true,
       tags: ["work", "meetings"],
     },
@@ -134,7 +130,6 @@ function NotesPage() {
       title: "Personal Goals",
       lastEdited: "Edited Oct 25",
       content: "Things I want to accomplish this year...",
-      thumbnail: "/notes.png",
       tags: ["personal", "goals"],
     },
     {
@@ -142,7 +137,6 @@ function NotesPage() {
       title: "Recipe Ideas",
       lastEdited: "Edited Oct 24",
       content: "New recipes to try this weekend...",
-      thumbnail: "/notes.png",
       starred: true,
       tags: ["food", "cooking"],
     },
@@ -151,7 +145,6 @@ function NotesPage() {
       title: "Book Recommendations",
       lastEdited: "Edited Oct 23",
       content: "Books recommended by friends...",
-      thumbnail: "/notes.png",
       tags: ["books", "reading"],
     },
     {
@@ -159,7 +152,6 @@ function NotesPage() {
       title: "Travel Plans",
       lastEdited: "Edited Oct 22",
       content: "Upcoming trip details and itinerary...",
-      thumbnail: "/notes.png",
       tags: ["travel", "vacation"],
     },
   ])
@@ -264,15 +256,7 @@ function NotesPage() {
         </div>
       </div>
 
-      <Button
-        size="lg"
-        className="fixed bottom-6 right-6 rounded-full text-white shadow-lg"
-        onClick={async () => {
-          await createNewNoteAction()
-        }}
-      >
-        <Plus className="mr-2 size-4" /> New Note
-      </Button>
+      <CreateNoteButton />
     </div>
   )
 }
