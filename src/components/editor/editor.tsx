@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { type LocalNote } from "@/db/local-db"
 import {
   EditorCommand,
   EditorCommandEmpty,
@@ -35,8 +36,12 @@ const hljs = require("highlight.js")
 
 const extensions = [...defaultExtensions, slashCommand]
 
-const NovelEditor = () => {
-  const [initialContent, setInitialContent] = useState<null | JSONContent>(null)
+interface NovelEditorProps {
+  initialContent: JSONContent | null
+  onUpdate: (editor: EditorInstance) => void
+}
+
+const NovelEditor = ({ initialContent, onUpdate }: NovelEditorProps) => {
   const [saveStatus, setSaveStatus] = useState("Saved")
   const [charsCount, setCharsCount] = useState()
 
@@ -60,27 +65,28 @@ const NovelEditor = () => {
     async (editor: EditorInstance) => {
       const json = editor.getJSON()
       setCharsCount(editor.storage.characterCount.words())
-      window.localStorage.setItem(
-        "html-content",
-        highlightCodeblocks(editor.getHTML()),
-      )
-      window.localStorage.setItem("novel-content", JSON.stringify(json))
-      window.localStorage.setItem(
-        "markdown",
-        editor.storage.markdown.getMarkdown(),
-      )
+      // window.localStorage.setItem(
+      //   "html-content",
+      //   highlightCodeblocks(editor.getHTML()),
+      // )
+      // window.localStorage.setItem("novel-content", JSON.stringify(json))
+      // window.localStorage.setItem(
+      //   "markdown",
+      //   editor.storage.markdown.getMarkdown(),
+      // )
+      onUpdate(editor) // Call the passed onUpdate function
       setSaveStatus("Saved")
     },
     500,
   )
 
-  useEffect(() => {
-    const content = window.localStorage.getItem("novel-content")
-    if (content) setInitialContent(JSON.parse(content))
-    else setInitialContent(defaultEditorContent)
-  }, [])
+  // useEffect(() => {
+  //   const content = window.localStorage.getItem("novel-content")
+  //   if (content) setInitialContent(JSON.parse(content))
+  //   else setInitialContent(defaultEditorContent)
+  // }, [])
 
-  if (!initialContent) return null
+  if (initialContent === undefined) return null
 
   return (
     <div className="relative mx-auto w-full max-w-screen-lg">
@@ -100,7 +106,7 @@ const NovelEditor = () => {
       </div>
       <EditorRoot>
         <EditorContent
-          initialContent={initialContent}
+          initialContent={initialContent ?? defaultEditorContent} // Use prop or default
           extensions={extensions}
           className="relative min-h-[500px] w-full bg-background sm:mb-[calc(20vh)] sm:rounded-lg"
           editorProps={{
