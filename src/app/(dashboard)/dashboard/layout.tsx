@@ -8,10 +8,10 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { user } = await validateRequest()
+  // const { user } = await validateRequest()
 
   return (
-    <DashboardProviders user={user}>
+    <DashboardProviders>
       <MaxWidthWrapper className="min-h-dvh lg:min-h-screen">
         {children}
       </MaxWidthWrapper>

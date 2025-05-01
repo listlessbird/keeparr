@@ -4,7 +4,7 @@ import { createContext, PropsWithChildren, useContext } from "react"
 import { User } from "@/db/schema"
 
 type SessionContext = {
-  user: User
+  user?: User
 }
 
 const sessionContext = createContext<SessionContext | null>(null)
