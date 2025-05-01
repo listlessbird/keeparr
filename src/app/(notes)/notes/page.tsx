@@ -36,7 +36,7 @@ function NoteCard({
   onUpdateTitle,
 }: {
   note: Note
-  onUpdateTitle: (id: string, newTitle: string) => Promise<void>
+  onUpdateTitle: (id: string, newTitle: string) => void
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editableTitle, setEditableTitle] = useState(note.title)
@@ -153,9 +153,11 @@ export default function Page() {
     error,
   } = useDexieQuery((db: typeof localDb) => db.notes.toArray(), [])
 
-  const [_, action, pending] = useDexieAction(
-    (params: { id: string; title: string }) =>
-      localDb.notes.update(params.id, { title: params.title }),
+  const [_, action] = useDexieAction((params: { id: string; title: string }) =>
+    localDb.notes.update(params.id, {
+      title: params.title,
+      updatedAt: new Date(),
+    }),
   )
 
   const recentNotes: Note[] =
@@ -305,7 +307,7 @@ export default function Page() {
                       key={note.id}
                       note={note}
                       onUpdateTitle={(id, newTitle) => {
-                        action({ id, title: newTitle })
+                        return action({ id, title: newTitle })
                       }}
                     />
                   ))}
@@ -325,7 +327,7 @@ export default function Page() {
                         key={note.id}
                         note={note}
                         onUpdateTitle={(id, newTitle) => {
-                          action({ id, title: newTitle })
+                          return action({ id, title: newTitle })
                         }}
                       />
                     ))}
