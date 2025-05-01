@@ -8,8 +8,7 @@ import { useDebouncedCallback } from "use-debounce"
 import { useDexieQuery } from "@/hooks/use-dexie-query"
 import NovelEditor from "@/components/editor/editor"
 
-export default function Page({ params }: { params: { id: string } }) {
-  // @ts-ignore
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id: noteId }: { id: string } = use(params)
 
   const {

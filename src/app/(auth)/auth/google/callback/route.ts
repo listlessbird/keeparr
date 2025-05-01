@@ -14,9 +14,10 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.url)
   const code = url.searchParams.get("code")
   const state = url.searchParams.get("state")
-  const storedState = cookies().get("google_oauth_state")?.value ?? null
-  const codeVerifier = cookies().get("google_code_verifier")?.value ?? null
-  const returnPath = cookies().get("return_to")?.value ?? "/dashboard"
+  const storedState = (await cookies()).get("google_oauth_state")?.value ?? null
+  const codeVerifier =
+    (await cookies()).get("google_code_verifier")?.value ?? null
+  const returnPath = (await cookies()).get("return_to")?.value ?? "/dashboard"
 
   if (
     code === null ||
@@ -52,10 +53,9 @@ export async function GET(request: NextRequest) {
   const picture = claims?.picture
   const email = claims?.email
   const existingUser = await getUserFromGoogleId(googleUserId)
-
-  cookies().set("google_oauth_state", "", { maxAge: 0 })
-  cookies().set("google_code_verifier", "", { maxAge: 0 })
-  cookies().set("return_path", "", { maxAge: 0 })
+  ;(await cookies()).set("google_oauth_state", "", { maxAge: 0 })
+  ;(await cookies()).set("google_code_verifier", "", { maxAge: 0 })
+  ;(await cookies()).set("return_path", "", { maxAge: 0 })
 
   if (existingUser !== null) {
     const sessionToken = generateSessionToken()
