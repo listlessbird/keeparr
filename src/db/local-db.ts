@@ -1,4 +1,4 @@
-import Dexie, { type EntityTable } from "dexie"
+import Dexie from "dexie"
 
 interface LocalNote {
   id: string
@@ -7,6 +7,9 @@ interface LocalNote {
   content: string
   createdAt: Date
   updatedAt: Date
+
+  // TODO: Add tags
+  // TODO: Add starred
 }
 
 interface LocalDirectory {
@@ -15,15 +18,20 @@ interface LocalDirectory {
   notes: LocalNote[]
 }
 
-const localDb = new Dexie("local-db") as Dexie & {
-  notes: EntityTable<LocalNote, string>
-  directories: EntityTable<LocalDirectory>
+class LocalDb extends Dexie {
+  notes!: Dexie.Table<LocalNote, string>
+  directories!: Dexie.Table<LocalDirectory, string>
+
+  constructor() {
+    super("local-db")
+    this.version(1).stores({
+      notes: "id, title, content, createdAt, updatedAt",
+      directories: "++id, name, notes",
+    })
+  }
 }
 
-localDb.version(1).stores({
-  notes: "id, title, content, createdAt, updatedAt",
-  directories: "++id, name, notes",
-})
+const localDb = new LocalDb()
 
 export type { LocalNote, LocalDirectory }
 export { localDb }

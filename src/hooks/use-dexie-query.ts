@@ -1,4 +1,3 @@
-import { error } from "console"
 import { localDb } from "@/db/local-db"
 import { useLiveQuery } from "dexie-react-hooks"
 

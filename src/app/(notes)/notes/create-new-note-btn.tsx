@@ -1,5 +1,6 @@
 "use client"
 
+import { ComponentPropsWithoutRef } from "react"
 import { useRouter } from "next/navigation"
 import { localDb, LocalNote } from "@/db/local-db"
 import { Plus } from "lucide-react"
@@ -7,7 +8,9 @@ import { Plus } from "lucide-react"
 import { useDexieAction } from "@/hooks/use-dexie-action"
 import { Button } from "@/components/ui/button"
 
-export function CreateNoteButton() {
+type CreateNoteButtonProps = ComponentPropsWithoutRef<typeof Button>
+
+export function CreateNoteButton(props: CreateNoteButtonProps) {
   const router = useRouter()
   const [error, action, pending] = useDexieAction(() => {
     console.log("Creating new note")
@@ -29,6 +32,7 @@ export function CreateNoteButton() {
       size="lg"
       className="fixed bottom-6 right-6 rounded-full text-white shadow-lg"
       onClick={() => action(null)}
+      {...props}
     >
       <Plus className="mr-2 size-4" /> New Note
     </Button>

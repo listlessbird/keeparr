@@ -1,20 +1,19 @@
 "use client"
 
-import { useState } from "react"
-import Image from "next/image"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import { createNewNoteAction } from "@/keeparr-notes/actions/action"
+import { localDb, LocalNote } from "@/db/local-db"
 import {
-  Clock,
   FilePlus,
   Folder,
   MoreHorizontal,
   Plus,
   Search,
   Star,
-  Tag,
 } from "lucide-react"
 
+import { useDexieAction } from "@/hooks/use-dexie-action"
+import { useDexieQuery } from "@/hooks/use-dexie-query"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -22,10 +21,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UserButton } from "@/app/(dashboard)/dashboard/user-indicator"
 
 import { CreateNoteButton } from "./create-new-note-btn"
-
-export default function Page() {
-  return <NotesPage />
-}
 
 interface Note {
   id: string
@@ -36,125 +31,239 @@ interface Note {
   tags?: string[]
 }
 
-const templateNotes = [
-  {
-    id: "t1",
-    title: "Blank note",
-    description: "Start with a clean slate",
-  },
-  {
-    id: "t2",
-    title: "To-do list",
-    description: "Stay organized with tasks",
-  },
-  {
-    id: "t3",
-    title: "Meeting notes",
-    description: "Capture important discussions",
-  },
-]
+function NoteCard({
+  note,
+  onUpdateTitle,
+}: {
+  note: Note
+  onUpdateTitle: (id: string, newTitle: string) => Promise<void>
+}) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [editableTitle, setEditableTitle] = useState(note.title)
 
-function NoteCard({ note }: { note: Note }) {
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus()
+      inputRef.current.select()
+    }
+  }, [isEditing])
+
+  const saveTitle = async () => {
+    if (editableTitle.trim() === "") {
+      setEditableTitle(note.title)
+      setIsEditing(false)
+      return
+    }
+
+    if (editableTitle !== note.title) {
+      try {
+        await onUpdateTitle(note.id, editableTitle.trim())
+      } catch (error) {
+        console.error("Error updating note title:", error)
+        // TODO: toast error
+        setEditableTitle(note.title)
+      }
+    }
+    setIsEditing(false)
+  }
+
   return (
-    <Link href={`/notes/${note.id}`}>
-      <Card className="h-full overflow-hidden outline-none transition-all hover:shadow-md hover:outline hover:outline-primary">
-        <CardHeader className="p-4 pb-2">
-          <div className="flex items-start justify-between">
-            <h3 className="line-clamp-1 font-medium">{note.title}</h3>
-            <div className="flex items-center">
-              {note.starred && <Star className="mr-1 size-4 text-amber-500" />}
-              <Button variant="ghost" size="icon" className="size-8">
-                <MoreHorizontal className="size-4" />
-              </Button>
+    <Card className="flex h-full flex-col overflow-hidden outline-none transition-all hover:shadow-md hover:outline hover:outline-primary">
+      <CardHeader className="p-4 pb-2">
+        <div className="flex items-start justify-between">
+          {isEditing ? (
+            <Input
+              ref={inputRef}
+              value={editableTitle}
+              onChange={(e) => {
+                setEditableTitle(e.target.value)
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  saveTitle()
+                } else if (e.key === "Escape") {
+                  // revert to original title
+                  setEditableTitle(note.title)
+                  setIsEditing(false)
+                }
+              }}
+              onBlur={(e) => {
+                saveTitle()
+              }}
+              className="h-auto flex-1 border-0 border-b border-primary bg-transparent p-0 text-base font-medium shadow-none focus-visible:ring-0"
+              aria-label="Edit note title"
+              data-component-name="note-title-input"
+            />
+          ) : (
+            <div
+              onDoubleClick={(e) => {
+                e.preventDefault()
+                setIsEditing(true)
+                setEditableTitle(note.title)
+              }}
+              className="flex-1 cursor-pointer"
+              data-component-name="note-title"
+              title="Double click to edit the note title"
+            >
+              <h3 className="line-clamp-1 font-medium">{note.title}</h3>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent className="px-4 py-2">
-          <p className="line-clamp-3 text-sm text-muted-foreground">
-            {note.content}
-          </p>
-        </CardContent>
-        <CardFooter className="flex items-center justify-between p-4 pt-2">
-          <div className="flex gap-1">
-            {note.tags?.slice(0, 2).map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full bg-muted px-2 py-0.5 text-xs"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-          <span className="text-xs text-muted-foreground">
-            {note.lastEdited}
-          </span>
-        </CardFooter>
-      </Card>
-    </Link>
-  )
-}
+          )}
 
-function TemplateCard({ template }: { template: (typeof templateNotes)[0] }) {
-  return (
-    <Card
-      className="flex cursor-pointer flex-col transition-all hover:shadow-md"
-      onClick={async () => {
-        await createNewNoteAction()
-      }}
-    >
-      <CardContent className="flex-1 p-0">
-        <div className="flex h-40 items-center justify-center bg-gradient-to-br from-purple-700/20 to-indigo-600/20">
-          <FilePlus className="size-12 text-primary" />
+          {/* <h3 className="line-clamp-1 font-medium">{note.title}</h3> */}
+          <div className="flex items-center">
+            {note.starred && <Star className="mr-1 size-4 text-amber-500" />}
+            <Button variant="ghost" size="icon" className="size-8">
+              <MoreHorizontal className="size-4" />
+            </Button>
+          </div>
         </div>
+      </CardHeader>
+      <CardContent className="flex-1 px-4 py-2">
+        <Link href={`/notes/${note.id}`}>
+          <p className="line-clamp-3 text-sm text-muted-foreground">
+            {note.content && note.content.length > 0
+              ? note.content
+              : "Empty note"}
+          </p>
+        </Link>
       </CardContent>
-      <CardFooter className="flex flex-col items-start p-4">
-        <h3 className="font-medium">{template.title}</h3>
-        <p className="text-sm text-muted-foreground">{template.description}</p>
+      <CardFooter className="mt-auto flex items-center justify-between p-4 pt-2">
+        <div className="flex gap-1">
+          {note.tags?.slice(0, 2).map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full bg-muted px-2 py-0.5 text-xs"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+        <span className="text-xs text-muted-foreground">{note.lastEdited}</span>
       </CardFooter>
     </Card>
   )
 }
 
-function NotesPage() {
-  const [recentNotes, setRecentNotes] = useState<Note[]>([
-    {
-      id: "1",
-      title: "Work Notes",
-      lastEdited: "Edited Oct 26",
-      content: "Project deadlines and meeting summaries...",
-      starred: true,
-      tags: ["work", "meetings"],
-    },
-    {
-      id: "2",
-      title: "Personal Goals",
-      lastEdited: "Edited Oct 25",
-      content: "Things I want to accomplish this year...",
-      tags: ["personal", "goals"],
-    },
-    {
-      id: "3",
-      title: "Recipe Ideas",
-      lastEdited: "Edited Oct 24",
-      content: "New recipes to try this weekend...",
-      starred: true,
-      tags: ["food", "cooking"],
-    },
-    {
-      id: "4",
-      title: "Book Recommendations",
-      lastEdited: "Edited Oct 23",
-      content: "Books recommended by friends...",
-      tags: ["books", "reading"],
-    },
-    {
-      id: "5",
-      title: "Travel Plans",
-      lastEdited: "Edited Oct 22",
-      content: "Upcoming trip details and itinerary...",
-      tags: ["travel", "vacation"],
-    },
-  ])
+export default function Page() {
+  const {
+    data: notes,
+    loading,
+    error,
+  } = useDexieQuery((db: typeof localDb) => db.notes.toArray(), [])
+
+  const [_, action, pending] = useDexieAction(
+    (params: { id: string; title: string }) =>
+      localDb.notes.update(params.id, { title: params.title }),
+  )
+
+  const recentNotes: Note[] =
+    notes?.map((note: LocalNote) => ({
+      id: note.id,
+      title: note.title,
+      lastEdited: `Edited ${new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+      }).format(note.updatedAt)}`,
+      content: note.content,
+    })) || []
+
+  if (loading) {
+    return (
+      <div className="flex h-screen flex-col">
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-6 py-3">
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard">
+              <Button variant="ghost" size="icon" className="mr-2">
+                <Folder className="size-5" />
+              </Button>
+            </Link>
+            <h1 className="text-xl font-semibold">Notes</h1>
+          </div>
+          <div className="relative mx-4 max-w-md flex-1">
+            <Search
+              className="absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              data-component-name="search-icon"
+            />
+            <Input
+              type="search"
+              placeholder="Search notes..."
+              className="w-full pl-8"
+            />
+          </div>
+          <div className="flex items-center">
+            <UserButton />
+          </div>
+        </header>
+        <div className="flex-1 p-6">
+          <div className="flex h-full items-center justify-center">
+            <p>Loading notes...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-screen flex-col">
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-6 py-3">
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard">
+              <Button variant="ghost" size="icon" className="mr-2">
+                <Folder className="size-5" />
+              </Button>
+            </Link>
+            <h1 className="text-xl font-semibold">Notes</h1>
+          </div>
+          <div className="relative mx-4 max-w-md flex-1">
+            <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search notes..."
+              className="w-full pl-8"
+            />
+          </div>
+          <div className="flex items-center">
+            <UserButton />
+          </div>
+        </header>
+        <div className="flex-1 p-6">
+          <div className="flex h-full items-center justify-center">
+            <p className="text-destructive">
+              Error loading notes: {error.message}
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const EmptyState = () => (
+    <div className="flex flex-col items-center justify-center p-12 text-center">
+      <div className="mb-4 rounded-full bg-muted p-6">
+        <FilePlus className="size-12 text-primary" />
+      </div>
+      <h3 className="mb-2 text-xl font-medium">No notes yet</h3>
+      <p className="mb-6 max-w-sm text-muted-foreground">
+        Create your first note to get started with organizing your thoughts and
+        ideas.
+      </p>
+      <Button
+        size="lg"
+        className="rounded-full"
+        onClick={() => {
+          const button = document.querySelector("[data-create-note-button]")
+          if (button instanceof HTMLElement) {
+            button.click()
+          }
+        }}
+      >
+        <Plus className="mr-2 size-4" /> Create New Note
+      </Button>
+    </div>
+  )
 
   return (
     <div className="flex h-screen flex-col">
@@ -168,7 +277,7 @@ function NotesPage() {
           <h1 className="text-xl font-semibold">Notes</h1>
         </div>
         <div className="relative mx-4 max-w-md flex-1">
-          <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
+          <Search className="absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
             placeholder="Search notes..."
@@ -181,82 +290,64 @@ function NotesPage() {
       </header>
 
       <div className="grid flex-1 grid-cols-12 overflow-hidden">
-        {/* Sidebar */}
-        <div className="col-span-2 hidden overflow-y-auto border-r p-3 md:block">
-          <div className="space-y-1">
-            <Button variant="ghost" className="w-full justify-start" size="sm">
-              <Clock className="mr-2 size-4" />
-              Recent
-            </Button>
-            <Button variant="ghost" className="w-full justify-start" size="sm">
-              <Star className="mr-2 size-4" />
-              Starred
-            </Button>
-            <Button variant="ghost" className="w-full justify-start" size="sm">
-              <Tag className="mr-2 size-4" />
-              Tags
-            </Button>
-          </div>
-
-          <div className="mt-6">
-            <h3 className="mb-2 px-2 text-sm font-medium">Tags</h3>
-            <div className="space-y-1">
-              {Array.from(
-                new Set(recentNotes.flatMap((note) => note.tags || [])),
-              ).map((tag) => (
-                <Button
-                  key={tag}
-                  variant="ghost"
-                  size="sm"
-                  className="w-full justify-start"
-                >
-                  <span className="mr-2 size-2 rounded-full bg-primary"></span>
-                  {tag}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Main content */}
         <div className="col-span-12 overflow-y-auto p-6 md:col-span-10">
           <Tabs defaultValue="recent" className="w-full">
             <TabsList className="mb-6">
               <TabsTrigger value="recent">Recent</TabsTrigger>
-              <TabsTrigger value="templates">Templates</TabsTrigger>
               <TabsTrigger value="starred">Starred</TabsTrigger>
             </TabsList>
 
             <TabsContent value="recent" className="space-y-6">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {recentNotes.map((note) => (
-                  <NoteCard key={note.id} note={note} />
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="templates">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {templateNotes.map((template) => (
-                  <TemplateCard key={template.id} template={template} />
-                ))}
-              </div>
+              {recentNotes.length > 0 ? (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {recentNotes.map((note) => (
+                    <NoteCard
+                      key={note.id}
+                      note={note}
+                      onUpdateTitle={(id, newTitle) => {
+                        action({ id, title: newTitle })
+                      }}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <EmptyState />
+              )}
             </TabsContent>
 
             <TabsContent value="starred">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {recentNotes
-                  .filter((note) => note.starred)
-                  .map((note) => (
-                    <NoteCard key={note.id} note={note} />
-                  ))}
-              </div>
+              {recentNotes.filter((note) => note.starred).length > 0 ? (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {recentNotes
+                    .filter((note) => note.starred)
+                    .map((note) => (
+                      <NoteCard
+                        key={note.id}
+                        note={note}
+                        onUpdateTitle={(id, newTitle) => {
+                          action({ id, title: newTitle })
+                        }}
+                      />
+                    ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center p-12 text-center">
+                  <div className="mb-4 rounded-full bg-muted p-6">
+                    <Star className="size-12 text-amber-500" />
+                  </div>
+                  <h3 className="mb-2 text-xl font-medium">No starred notes</h3>
+                  <p className="mb-6 max-w-sm text-muted-foreground">
+                    Star your important notes to find them quickly in this
+                    section.
+                  </p>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
       </div>
 
-      <CreateNoteButton />
+      <CreateNoteButton data-create-note-button />
     </div>
   )
 }
