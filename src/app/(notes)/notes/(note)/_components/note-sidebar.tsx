@@ -1,6 +1,8 @@
+"use client"
+
 import Link from "next/link"
-import { CreateNoteButton } from "@/keeparr-notes/create-new-note-btn"
 import {
+  ChevronDown,
   Clock,
   FileText,
   Folder,
@@ -12,17 +14,17 @@ import {
   Tag,
 } from "lucide-react"
 
+import { useDexieQuery } from "@/hooks/use-dexie-query"
 import { Button } from "@/components/ui/button"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Sidebar } from "@/app/(notes)/notes/(note)/_components/sidebar"
-
-// Mock data
-const recentNotes = [
-  { id: "1", title: "Work Notes", date: "Oct 26" },
-  { id: "2", title: "Personal Goals", date: "Oct 25" },
-  { id: "3", title: "Recipe Ideas", date: "Oct 24" },
-]
+import { CreateNoteButton } from "@/app/(notes)/notes/create-new-note-btn"
 
 const tags = [
   { id: "1", name: "work", color: "bg-blue-500" },
@@ -31,11 +33,34 @@ const tags = [
   { id: "4", name: "important", color: "bg-red-500" },
 ]
 
+function formatDate(date: Date): string {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ]
+  return `${months[date.getMonth()]} ${date.getDate()}`
+}
+
 export function NoteSidebar() {
+  const { data: recentNotes, loading } = useDexieQuery(
+    (db) => db.notes.orderBy("updatedAt").reverse().limit(5).toArray(),
+    [],
+  )
+
   return (
     <Sidebar className="hidden w-64 border-r md:block">
       <div className="flex h-full flex-col">
-        <div className="flex items-center justify-between border-b p-4">
+        <div className="flex items-center justify-between border-b px-4 py-2 ">
           <Link href="/notes">
             <Button variant="ghost" size="sm" className="text-lg font-semibold">
               Notes
@@ -47,38 +72,67 @@ export function NoteSidebar() {
         </div>
 
         <div className="relative px-3 py-2">
-          <Search className="absolute left-5 top-[14px] size-4 text-muted-foreground" />
+          <Search className="absolute left-5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input placeholder="Search notes..." className="pl-8" />
         </div>
 
         <ScrollArea className="flex-1">
           <div className="space-y-6 p-3">
-            {/* Quick actions */}
             <div className="space-y-1">
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                size="sm"
-              >
-                <FileText className="mr-2 size-4" />
-                All Notes
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                size="sm"
-              >
-                <Clock className="mr-2 size-4" />
-                Recent
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                size="sm"
-              >
-                <Star className="mr-2 size-4" />
-                Starred
-              </Button>
+              <Collapsible className="group/collapsible">
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start"
+                    size="sm"
+                  >
+                    <FileText className="mr-2 size-4" />
+                    All Notes{" "}
+                    <ChevronDown className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="space-y-1 ps-4">
+                    {recentNotes?.map((note) => (
+                      <Link href={`/notes/${note.id}`} key={note.id}>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                        >
+                          {note.title}
+                        </Button>
+                      </Link>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+              <Collapsible className="group/collapsible">
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start"
+                    size="sm"
+                  >
+                    <Star className="mr-2 size-4" />
+                    Starred
+                    <ChevronDown className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="space-y-1 ps-4">
+                    {recentNotes?.map((note) => (
+                      <Link href={`/notes/${note.id}`} key={note.id}>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                        >
+                          {note.title}
+                        </Button>
+                      </Link>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
               <Button
                 variant="ghost"
                 className="w-full justify-start"
@@ -87,39 +141,39 @@ export function NoteSidebar() {
                 <Tag className="mr-2 size-4" />
                 Tags
               </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                size="sm"
-              >
-                <List className="mr-2 size-4" />
-                To-do Lists
-              </Button>
             </div>
 
-            {/* Recent notes */}
             <div>
               <h3 className="mb-2 px-2 text-sm font-medium">Recent Notes</h3>
               <div className="space-y-1">
-                {recentNotes.map((note) => (
-                  <Link href={`/notes/${note.id}`} key={note.id}>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-left"
-                      size="sm"
-                    >
-                      <div className="mr-2 size-4 shrink-0 rounded-full bg-muted" />
-                      <span className="truncate">{note.title}</span>
-                      <span className="ml-auto text-xs text-muted-foreground">
-                        {note.date}
-                      </span>
-                    </Button>
-                  </Link>
-                ))}
+                {loading ? (
+                  <div className="px-2 py-1 text-sm text-muted-foreground">
+                    Loading notes...
+                  </div>
+                ) : recentNotes && recentNotes.length > 0 ? (
+                  recentNotes.map((note) => (
+                    <Link href={`/notes/${note.id}`} key={note.id}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-left"
+                        size="sm"
+                      >
+                        <div className="mr-2 size-4 shrink-0 rounded-full bg-muted" />
+                        <span className="truncate">{note.title}</span>
+                        <span className="ml-auto text-xs text-muted-foreground">
+                          {formatDate(note.updatedAt)}
+                        </span>
+                      </Button>
+                    </Link>
+                  ))
+                ) : (
+                  <div className="px-2 py-1 text-sm text-muted-foreground">
+                    No recent notes
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Tags */}
             <div>
               <h3 className="mb-2 px-2 text-sm font-medium">Tags</h3>
               <div className="space-y-1">

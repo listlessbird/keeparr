@@ -173,7 +173,7 @@ export function Sidebar({ children, ...props }: React.ComponentProps<"div">) {
       />
       <div
         className={cn(
-          "md:flexleft-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]group-data-[collapsible=icon]:w-[--sidebar-width-icon] fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] duration-200 ease-linear group-data-[side=left]:border-r group-data-[side=right]:border-l",
+          "fixed inset-y-0 left-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] duration-200 ease-linear group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l md:flex",
           props.className,
         )}
       >
