@@ -10,33 +10,35 @@ import {
   Plus,
   Search,
   Star,
+  Trash,
 } from "lucide-react"
 
+import { NoteProps } from "@/types/note"
+import { cn, getRelativeTimeString } from "@/lib/utils"
 import { useDexieAction } from "@/hooks/use-dexie-action"
 import { useDexieQuery } from "@/hooks/use-dexie-query"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UserButton } from "@/app/(dashboard)/dashboard/user-indicator"
 
 import { CreateNoteButton } from "./create-new-note-btn"
 
-interface Note {
-  id: string
-  title: string
-  lastEdited: string
-  content?: string
-  starred?: boolean
-  tags?: string[]
-}
-
 function NoteCard({
   note,
   onUpdateTitle,
+  onToggleStar,
 }: {
-  note: Note
+  note: NoteProps
   onUpdateTitle: (id: string, newTitle: string) => void
+  onToggleStar: () => void
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editableTitle, setEditableTitle] = useState(note.title)
@@ -69,6 +71,17 @@ function NoteCard({
     setIsEditing(false)
   }
 
+  const deleteNote = async () => {
+    try {
+      await localDb.notes.delete(note.id).then(() => {
+        // TODO: toast success
+      })
+    } catch (error) {
+      console.error("Error deleting note:", error)
+      // TODO: toast error
+    }
+  }
+
   return (
     <Card className="flex h-full flex-col overflow-hidden outline-none transition-all hover:shadow-md hover:outline hover:outline-primary">
       <CardHeader className="p-4 pb-2">
@@ -89,7 +102,7 @@ function NoteCard({
                   setIsEditing(false)
                 }
               }}
-              onBlur={(e) => {
+              onBlur={() => {
                 saveTitle()
               }}
               className="h-auto flex-1 border-0 border-b border-primary bg-transparent p-0 text-base font-medium shadow-none focus-visible:ring-0"
@@ -113,10 +126,35 @@ function NoteCard({
 
           {/* <h3 className="line-clamp-1 font-medium">{note.title}</h3> */}
           <div className="flex items-center">
-            {note.starred && <Star className="mr-1 size-4 text-amber-500" />}
-            <Button variant="ghost" size="icon" className="size-8">
-              <MoreHorizontal className="size-4" />
-            </Button>
+            {note.starred && (
+              <Star className="mr-1 size-4 fill-amber-500 text-amber-500" />
+            )}
+            <div className="relative">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="size-8">
+                    <MoreHorizontal className="size-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="space-y-1">
+                  <DropdownMenuItem
+                    className="cursor-pointer bg-destructive/80 text-destructive-foreground hover:bg-destructive focus:bg-destructive"
+                    onClick={deleteNote}
+                  >
+                    <Trash className="mr-2 size-4" /> Delete
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={onToggleStar}>
+                    <Star
+                      className={cn(
+                        "mr-2 size-4",
+                        note.starred && "fill-amber-500 text-amber-500",
+                      )}
+                    />{" "}
+                    {note.starred ? "Unstar" : "Star"}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </CardHeader>
@@ -160,15 +198,21 @@ export default function Page() {
     }),
   )
 
-  const recentNotes: Note[] =
+  const [starError, toggleStar] = useDexieAction(
+    (params: { id: string; starred: boolean }) =>
+      localDb.notes.update(params.id, {
+        starred: !params.starred,
+        updatedAt: new Date(),
+      }),
+  )
+
+  const recentNotes: NoteProps[] =
     notes?.map((note: LocalNote) => ({
       id: note.id,
       title: note.title,
-      lastEdited: `Edited ${new Intl.DateTimeFormat("en-US", {
-        month: "short",
-        day: "numeric",
-      }).format(note.updatedAt)}`,
+      lastEdited: getRelativeTimeString(note.updatedAt),
       content: note.content,
+      starred: note.starred,
     })) || []
 
   if (loading) {
@@ -306,9 +350,15 @@ export default function Page() {
                     <NoteCard
                       key={note.id}
                       note={note}
-                      onUpdateTitle={(id, newTitle) => {
-                        return action({ id, title: newTitle })
-                      }}
+                      onUpdateTitle={(id, newTitle) =>
+                        action({ id, title: newTitle })
+                      }
+                      onToggleStar={() =>
+                        toggleStar({
+                          id: note.id,
+                          starred: note.starred ?? false,
+                        })
+                      }
                     />
                   ))}
                 </div>
@@ -326,9 +376,15 @@ export default function Page() {
                       <NoteCard
                         key={note.id}
                         note={note}
-                        onUpdateTitle={(id, newTitle) => {
-                          return action({ id, title: newTitle })
-                        }}
+                        onUpdateTitle={(id, newTitle) =>
+                          action({ id, title: newTitle })
+                        }
+                        onToggleStar={() =>
+                          toggleStar({
+                            id: note.id,
+                            starred: note.starred ?? false,
+                          })
+                        }
                       />
                     ))}
                 </div>

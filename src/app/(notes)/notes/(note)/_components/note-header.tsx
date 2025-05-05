@@ -11,23 +11,23 @@ import {
   Tags,
 } from "lucide-react"
 
+import { NoteProps } from "@/types/note"
+import { cn, getRelativeTimeString } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SidebarTrigger } from "@/app/(notes)/notes/(note)/_components/sidebar-trigger"
 
 export function NoteHeader({
-  title,
-  lastEdited,
-  noteId,
+  note,
   onUpdateTitle,
+  onToggleStar,
 }: {
-  title: string
-  lastEdited: string
-  noteId: string
+  note: NoteProps
   onUpdateTitle: (id: string, newTitle: string) => void
+  onToggleStar: () => void
 }) {
   const [isEditing, setIsEditing] = useState(false)
-  const [editableTitle, setEditableTitle] = useState(title)
+  const [editableTitle, setEditableTitle] = useState(note.title)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -38,22 +38,22 @@ export function NoteHeader({
   }, [isEditing])
 
   useEffect(() => {
-    setEditableTitle(title)
-  }, [title])
+    setEditableTitle(note.title)
+  }, [note.title])
 
   const saveTitle = () => {
     if (editableTitle.trim() === "") {
-      setEditableTitle(title)
+      setEditableTitle(note.title)
       setIsEditing(false)
       return
     }
 
-    if (editableTitle !== title) {
+    if (editableTitle !== note.title) {
       try {
-        onUpdateTitle(noteId, editableTitle.trim())
+        onUpdateTitle(note.id, editableTitle.trim())
       } catch (error) {
         console.error("Error updating note title:", error)
-        setEditableTitle(title)
+        setEditableTitle(note.title)
       }
     }
     setIsEditing(false)
@@ -70,7 +70,7 @@ export function NoteHeader({
         </Link>
         <div className="ml-2 hidden md:block">
           <p className="text-xs font-medium text-muted-foreground">
-            Last edited: {lastEdited}
+            Last edited: {note.lastEdited}
           </p>
         </div>
       </div>
@@ -85,7 +85,7 @@ export function NoteHeader({
               if (e.key === "Enter") {
                 saveTitle()
               } else if (e.key === "Escape") {
-                setEditableTitle(title)
+                setEditableTitle(note.title)
                 setIsEditing(false)
               }
             }}
@@ -100,7 +100,7 @@ export function NoteHeader({
               onDoubleClick={() => setIsEditing(true)}
               title="Double click to edit title"
             >
-              {title}
+              {note.title}
             </h2>
           </div>
         )}
@@ -127,8 +127,14 @@ export function NoteHeader({
           variant="ghost"
           size="sm"
           className="h-8 gap-1 px-2 text-xs md:text-sm"
+          onClick={onToggleStar}
         >
-          <Star className="size-4" />
+          <Star
+            className={cn(
+              "size-4",
+              note.starred && "fill-amber-500 text-amber-500",
+            )}
+          />
           <span className="hidden md:inline">Star</span>
         </Button>
         <Button
