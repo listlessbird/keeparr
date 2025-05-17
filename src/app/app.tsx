@@ -1,11 +1,9 @@
+import DashboardLayout from "@/frontend/dashboard/layout"
+import Dashboard from "@/frontend/dashboard/page"
 import NotesLayout from "@/frontend/notes/layout"
 import Note from "@/frontend/notes/note/[id]/page"
-import NoteLayout from "@/frontend/notes/note/layout"
 import NotesDashboard from "@/frontend/notes/page"
 import { BrowserRouter, NavLink, Route, Routes } from "react-router"
-
-import DashboardLayout from "@/app/(dashboard)/dashboard/layout"
-import Dashboard from "@/app/(dashboard)/dashboard/page"
 
 export default function App() {
   return (
