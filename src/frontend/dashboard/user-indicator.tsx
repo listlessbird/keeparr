@@ -1,9 +1,5 @@
 "use client"
 
-import { useMemo } from "react"
-import Image from "next/image"
-
-import { getInitials } from "@/lib/utils"
 import { useSession } from "@/hooks/use-session"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -14,16 +10,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Typography from "@/components/ui/typography"
-import { logOut } from "@/app/(auth)/action"
 
 export function UserButton() {
   const { user } = useSession()
-
-  const userInitials = useMemo(
-    () => getInitials(user?.username || ""),
-    [user?.username],
-  )
-
   return (
     <div className="absolute right-4 top-4">
       <DropdownMenu>
@@ -51,7 +40,7 @@ export function UserButton() {
             className="cursor-pointer focus:bg-red-900"
             onSelect={async (e) => {
               e.preventDefault()
-              await logOut()
+              // await logOut()
             }}
           >
             Logout

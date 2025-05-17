@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { localDb, LocalNote } from "@/db/local-db"
+import { UserButton } from "@/frontend/dashboard/user-indicator"
 import {
   FilePlus,
   Folder,
@@ -27,7 +28,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { UserButton } from "@/app/(dashboard)/dashboard/user-indicator"
 
 import { CreateNoteButton } from "./create-new-note-btn"
 
