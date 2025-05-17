@@ -73,9 +73,8 @@ function NoteCard({
 
   const deleteNote = async () => {
     try {
-      await localDb.notes.delete(note.id).then(() => {
-        // TODO: toast success
-      })
+      await localDb.notes.delete(note.id)
+      // TODO: toast success
     } catch (error) {
       console.error("Error deleting note:", error)
       // TODO: toast error
@@ -162,7 +161,31 @@ function NoteCard({
         <Link to={`/notes/${note.id}`}>
           <p className="line-clamp-3 text-sm text-muted-foreground">
             {note.content && note.content.length > 0
-              ? note.content
+              ? (() => {
+                  try {
+                    const jsonContent = JSON.parse(note.content)
+                    const extractTextFromNode = (node: any): string => {
+                      if (typeof node === "string") return node
+                      if (!node) return ""
+
+                      if (node.type === "text") return node.text || ""
+
+                      if (node.content && Array.isArray(node.content)) {
+                        return node.content
+                          .map((child: any) => extractTextFromNode(child))
+                          .join("")
+                      }
+
+                      return ""
+                    }
+
+                    const plainText = extractTextFromNode(jsonContent)
+                    return plainText || "Empty note"
+                  } catch (e) {
+                    console.error("Error parsing note content:", e)
+                    return note.content
+                  }
+                })()
               : "Empty note"}
           </p>
         </Link>
@@ -184,6 +207,32 @@ function NoteCard({
   )
 }
 
+function NotesHeader() {
+  return (
+    <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-6 py-3">
+      <div className="flex items-center gap-4">
+        <Link to="/dashboard">
+          <Button variant="ghost" size="icon" className="mr-2">
+            <Folder className="size-5" />
+          </Button>
+        </Link>
+        <h1 className="text-xl font-semibold">Notes</h1>
+      </div>
+      <div className="relative mx-4 max-w-md flex-1">
+        <Search className="absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          type="search"
+          placeholder="Search notes..."
+          className="w-full pl-8"
+        />
+      </div>
+      <div className="flex items-center">
+        <UserButton />
+      </div>
+    </header>
+  )
+}
+
 export default function Page() {
   const {
     data: notes,
@@ -198,7 +247,7 @@ export default function Page() {
     }),
   )
 
-  const [starError, toggleStar] = useDexieAction(
+  const [, toggleStar] = useDexieAction(
     (params: { id: string; starred: boolean }) =>
       localDb.notes.update(params.id, {
         starred: !params.starred,
@@ -218,30 +267,7 @@ export default function Page() {
   if (loading) {
     return (
       <div className="flex h-screen flex-col">
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-6 py-3">
-          <div className="flex items-center gap-4">
-            <Link to="/dashboard">
-              <Button variant="ghost" size="icon" className="mr-2">
-                <Folder className="size-5" />
-              </Button>
-            </Link>
-            <h1 className="text-xl font-semibold">Notes</h1>
-          </div>
-          <div className="relative mx-4 max-w-md flex-1">
-            <Search
-              className="absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-              data-component-name="search-icon"
-            />
-            <Input
-              type="search"
-              placeholder="Search notes..."
-              className="w-full pl-8"
-            />
-          </div>
-          <div className="flex items-center">
-            <UserButton />
-          </div>
-        </header>
+        <NotesHeader />
         <div className="flex-1 p-6">
           <div className="flex h-full items-center justify-center">
             <p>Loading notes...</p>
@@ -254,27 +280,7 @@ export default function Page() {
   if (error) {
     return (
       <div className="flex h-screen flex-col">
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-6 py-3">
-          <div className="flex items-center gap-4">
-            <Link to="/dashboard">
-              <Button variant="ghost" size="icon" className="mr-2">
-                <Folder className="size-5" />
-              </Button>
-            </Link>
-            <h1 className="text-xl font-semibold">Notes</h1>
-          </div>
-          <div className="relative mx-4 max-w-md flex-1">
-            <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search notes..."
-              className="w-full pl-8"
-            />
-          </div>
-          <div className="flex items-center">
-            <UserButton />
-          </div>
-        </header>
+        <NotesHeader />
         <div className="flex-1 p-6">
           <div className="flex h-full items-center justify-center">
             <p className="text-destructive">
@@ -313,28 +319,7 @@ export default function Page() {
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-6 py-3">
-        <div className="flex items-center gap-4">
-          <Link to="/dashboard">
-            <Button variant="ghost" size="icon" className="mr-2">
-              <Folder className="size-5" />
-            </Button>
-          </Link>
-          <h1 className="text-xl font-semibold">Notes</h1>
-        </div>
-        <div className="relative mx-4 max-w-md flex-1">
-          <Search className="absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search notes..."
-            className="w-full pl-8"
-          />
-        </div>
-        <div className="flex items-center">
-          <UserButton />
-        </div>
-      </header>
-
+      <NotesHeader />
       <div className="grid flex-1 grid-cols-12 overflow-hidden">
         <div className="col-span-12 overflow-y-auto p-6 md:col-span-10">
           <Tabs defaultValue="recent" className="w-full">
@@ -404,7 +389,6 @@ export default function Page() {
           </Tabs>
         </div>
       </div>
-
       <CreateNoteButton data-create-note-button />
     </div>
   )

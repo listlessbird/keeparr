@@ -1,9 +1,9 @@
 "use client"
 
 import { ComponentPropsWithoutRef } from "react"
-import { useRouter } from "next/navigation"
 import { localDb, LocalNote } from "@/db/local-db"
 import { Plus } from "lucide-react"
+import { useNavigate } from "react-router"
 
 import { useDexieAction } from "@/hooks/use-dexie-action"
 import { Button } from "@/components/ui/button"
@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 type CreateNoteButtonProps = ComponentPropsWithoutRef<typeof Button>
 
 export function CreateNoteButton(props: CreateNoteButtonProps) {
-  const router = useRouter()
+  const navigate = useNavigate()
   const [error, action, pending] = useDexieAction(() => {
     console.log("Creating new note")
     const note = {
@@ -20,11 +20,18 @@ export function CreateNoteButton(props: CreateNoteButtonProps) {
       content: "",
       createdAt: new Date(),
       updatedAt: new Date(),
+      starred: false,
     } satisfies LocalNote
 
-    return localDb.notes.add(note).then(() => {
-      router.push(`/notes/${note.id}`)
-    })
+    return localDb.notes
+      .add(note)
+      .then(() => {
+        navigate(`/notes/${note.id}`)
+      })
+      .catch((err) => {
+        console.error("Failed to create note:", err)
+        // TODO: toast error
+      })
   })
 
   return (

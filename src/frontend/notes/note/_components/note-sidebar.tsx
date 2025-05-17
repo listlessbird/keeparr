@@ -1,20 +1,16 @@
 "use client"
 
-import Link from "next/link"
 import { CreateNoteButton } from "@/frontend/notes/create-new-note-btn"
 import { Sidebar } from "@/frontend/notes/note/_components/sidebar"
 import {
   ChevronDown,
-  Clock,
   FileText,
-  Folder,
-  List,
-  Plus,
   Search,
   Settings,
   Star,
   Tag,
 } from "lucide-react"
+import { NavLink as Link } from "react-router"
 
 import { useDexieQuery } from "@/hooks/use-dexie-query"
 import { Button } from "@/components/ui/button"
@@ -34,21 +30,10 @@ const tags = [
 ]
 
 function formatDate(date: Date): string {
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ]
-  return `${months[date.getMonth()]} ${date.getDate()}`
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+  }).format(date)
 }
 
 export function NoteSidebar() {
@@ -61,7 +46,7 @@ export function NoteSidebar() {
     <Sidebar className="hidden w-64 border-r md:block">
       <div className="flex h-full flex-col">
         <div className="flex items-center justify-between border-b px-4 py-2 ">
-          <Link href="/notes">
+          <Link to="/notes">
             <Button variant="ghost" size="sm" className="text-lg font-semibold">
               Notes
             </Button>
@@ -93,16 +78,18 @@ export function NoteSidebar() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="space-y-1 ps-4">
-                    {recentNotes?.map((note) => (
-                      <Link href={`/notes/${note.id}`} key={note.id}>
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start"
-                        >
-                          {note.title}
-                        </Button>
-                      </Link>
-                    ))}
+                    {recentNotes
+                      ?.filter((note) => note.starred)
+                      ?.map((note) => (
+                        <Link to={`/notes/${note.id}`} key={note.id}>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                          >
+                            {note.title}
+                          </Button>
+                        </Link>
+                      ))}
                   </div>
                 </CollapsibleContent>
               </Collapsible>
@@ -120,16 +107,18 @@ export function NoteSidebar() {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="space-y-1 ps-4">
-                    {recentNotes?.map((note) => (
-                      <Link href={`/notes/${note.id}`} key={note.id}>
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start"
-                        >
-                          {note.title}
-                        </Button>
-                      </Link>
-                    ))}
+                    {recentNotes
+                      ?.filter((note) => note.starred)
+                      ?.map((note) => (
+                        <Link to={`/notes/${note.id}`} key={note.id}>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                          >
+                            {note.title}
+                          </Button>
+                        </Link>
+                      ))}
                   </div>
                 </CollapsibleContent>
               </Collapsible>
@@ -152,7 +141,7 @@ export function NoteSidebar() {
                   </div>
                 ) : recentNotes && recentNotes.length > 0 ? (
                   recentNotes.map((note) => (
-                    <Link href={`/notes/${note.id}`} key={note.id}>
+                    <Link to={`/notes/${note.id}`} key={note.id}>
                       <Button
                         variant="ghost"
                         className="w-full justify-start text-left"

@@ -1,4 +1,12 @@
-import { Bookmark, Brush, List, NotebookPen, Play, Plus } from "lucide-react"
+import {
+  Bookmark,
+  Brush,
+  List,
+  LucideIcon,
+  NotebookPen,
+  Play,
+  Plus,
+} from "lucide-react"
 import { NavLink as Link } from "react-router"
 
 import {
@@ -11,8 +19,85 @@ import {
 
 import { UserButton, WelcomeMessage } from "./user-indicator"
 
+interface DashboardCardProps {
+  to: string
+  Icon: LucideIcon
+  title: string
+  description: string
+  gradientFrom: string
+  gradientTo: string
+}
+
+function DashboardCard({
+  to,
+  Icon,
+  title,
+  description,
+  gradientFrom,
+  gradientTo,
+}: DashboardCardProps) {
+  return (
+    <Link to={to} className="group block">
+      <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary hover:shadow-md">
+        <CardHeader
+          className={`flex flex-row items-center gap-3 bg-gradient-to-br from-${gradientFrom} to-${gradientTo} px-6 py-4`}
+        >
+          <div className="rounded-full bg-white/20 p-2">
+            <Icon size={24} className="text-white" />
+          </div>
+          <CardTitle className="text-white">{title}</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <CardDescription className="text-base">{description}</CardDescription>
+        </CardContent>
+      </Card>
+    </Link>
+  )
+}
+
 export default function Dashboard() {
-  const iconSize = 24
+  const dashboardCards = [
+    {
+      to: "/dashboard",
+      Icon: Play,
+      title: "Continue",
+      description: "Continue working on your last project",
+      gradientFrom: "primary/80",
+      gradientTo: "primary",
+    },
+    {
+      to: "/notes",
+      Icon: NotebookPen,
+      title: "Document",
+      description: "Create or edit your documents and notes",
+      gradientFrom: "purple-700",
+      gradientTo: "indigo-600",
+    },
+    {
+      to: "/dashboard",
+      Icon: Bookmark,
+      title: "Bookmarks",
+      description: "Add and manage your bookmarks for quick access",
+      gradientFrom: "blue-700",
+      gradientTo: "cyan-600",
+    },
+    {
+      to: "/dashboard",
+      Icon: List,
+      title: "Reading List",
+      description: "Organize articles and content to read later",
+      gradientFrom: "amber-600",
+      gradientTo: "orange-600",
+    },
+    {
+      to: "/dashboard",
+      Icon: Brush,
+      title: "Canvas",
+      description: "Create visual diagrams, sketches, and mindmaps",
+      gradientFrom: "pink-600",
+      gradientTo: "rose-600",
+    },
+  ]
 
   return (
     <div className="relative min-h-screen">
@@ -24,85 +109,9 @@ export default function Dashboard() {
         <WelcomeMessage />
 
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Link to="/dashboard" className="group block">
-            <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary hover:shadow-md">
-              <CardHeader className="flex flex-row items-center gap-3 bg-gradient-to-br from-primary/80 to-primary px-6 py-4">
-                <div className="rounded-full bg-white/20 p-2">
-                  <Play size={iconSize} className="text-white" />
-                </div>
-                <CardTitle className="text-white">Continue</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <CardDescription className="text-base">
-                  Continue working on your last project
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/notes" className="group block">
-            <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary hover:shadow-md">
-              <CardHeader className="flex flex-row items-center gap-3 bg-gradient-to-br from-purple-700 to-indigo-600 px-6 py-4">
-                <div className="rounded-full bg-white/20 p-2">
-                  <NotebookPen size={iconSize} className="text-white" />
-                </div>
-                <CardTitle className="text-white">Document</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <CardDescription className="text-base">
-                  Create or edit your documents and notes
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/dashboard" className="group block">
-            <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary hover:shadow-md">
-              <CardHeader className="flex flex-row items-center gap-3 bg-gradient-to-br from-blue-700 to-cyan-600 px-6 py-4">
-                <div className="rounded-full bg-white/20 p-2">
-                  <Bookmark size={iconSize} className="text-white" />
-                </div>
-                <CardTitle className="text-white">Bookmarks</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <CardDescription className="text-base">
-                  Add and manage your bookmarks for quick access
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/dashboard" className="group block">
-            <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary hover:shadow-md">
-              <CardHeader className="flex flex-row items-center gap-3 bg-gradient-to-br from-amber-600 to-orange-600 px-6 py-4">
-                <div className="rounded-full bg-white/20 p-2">
-                  <List size={iconSize} className="text-white" />
-                </div>
-                <CardTitle className="text-white">Reading List</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <CardDescription className="text-base">
-                  Organize articles and content to read later
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/dashboard" className="group block">
-            <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary hover:shadow-md">
-              <CardHeader className="flex flex-row items-center gap-3 bg-gradient-to-br from-pink-600 to-rose-600 px-6 py-4">
-                <div className="rounded-full bg-white/20 p-2">
-                  <Brush size={iconSize} className="text-white" />
-                </div>
-                <CardTitle className="text-white">Canvas</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <CardDescription className="text-base">
-                  Create visual diagrams, sketches, and mindmaps
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </Link>
+          {dashboardCards.map((cardProps) => (
+            <DashboardCard key={cardProps.title} {...cardProps} />
+          ))}
         </div>
       </div>
     </div>
