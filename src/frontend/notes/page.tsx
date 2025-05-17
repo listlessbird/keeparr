@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import Link from "next/link"
 import { localDb, LocalNote } from "@/db/local-db"
 import {
   FilePlus,
@@ -12,6 +11,7 @@ import {
   Star,
   Trash,
 } from "lucide-react"
+import { NavLink as Link } from "react-router"
 
 import { NoteProps } from "@/types/note"
 import { cn, getRelativeTimeString } from "@/lib/utils"
@@ -159,7 +159,7 @@ function NoteCard({
         </div>
       </CardHeader>
       <CardContent className="flex-1 px-4 py-2">
-        <Link href={`/notes/${note.id}`}>
+        <Link to={`/notes/${note.id}`}>
           <p className="line-clamp-3 text-sm text-muted-foreground">
             {note.content && note.content.length > 0
               ? note.content
@@ -220,7 +220,7 @@ export default function Page() {
       <div className="flex h-screen flex-col">
         <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-6 py-3">
           <div className="flex items-center gap-4">
-            <Link href="/dashboard">
+            <Link to="/dashboard">
               <Button variant="ghost" size="icon" className="mr-2">
                 <Folder className="size-5" />
               </Button>
@@ -256,7 +256,7 @@ export default function Page() {
       <div className="flex h-screen flex-col">
         <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-6 py-3">
           <div className="flex items-center gap-4">
-            <Link href="/dashboard">
+            <Link to="/dashboard">
               <Button variant="ghost" size="icon" className="mr-2">
                 <Folder className="size-5" />
               </Button>
@@ -315,7 +315,7 @@ export default function Page() {
     <div className="flex h-screen flex-col">
       <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background px-6 py-3">
         <div className="flex items-center gap-4">
-          <Link href="/dashboard">
+          <Link to="/dashboard">
             <Button variant="ghost" size="icon" className="mr-2">
               <Folder className="size-5" />
             </Button>

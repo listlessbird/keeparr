@@ -1,24 +1,20 @@
 "use client"
 
-import { useParams } from "next/navigation"
-import { localDb } from "@/db/local-db"
+import { useEffect } from "react"
+import { localDb, type LocalNote } from "@/db/local-db"
+import { NoteHeader } from "@/frontend/notes/note/_components/note-header"
+import { NoteSidebar } from "@/frontend/notes/note/_components/note-sidebar"
+import { SidebarProvider } from "@/frontend/notes/note/_components/sidebar"
+import { type EditorInstance } from "novel"
+import { useParams } from "react-router"
+import { useDebouncedCallback } from "use-debounce"
 
 import { getRelativeTimeString } from "@/lib/utils"
 import { useDexieAction } from "@/hooks/use-dexie-action"
 import { useDexieQuery } from "@/hooks/use-dexie-query"
-import { NoteHeader } from "@/app/(notes)/notes/(note)/_components/note-header"
-import { NoteSidebar } from "@/app/(notes)/notes/(note)/_components/note-sidebar"
-import { SidebarProvider } from "@/app/(notes)/notes/(note)/_components/sidebar"
+import NovelEditor from "@/components/editor/editor"
 
-import "@/components/editor/novel-editor.css"
-
-import { NoteProps } from "@/types/note"
-
-export default function NoteLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function Page() {
   const params = useParams()
   const noteId = params.id as string
 
@@ -29,20 +25,44 @@ export default function NoteLayout({
   } = useDexieQuery((db: typeof localDb) => db.notes.get(noteId), [noteId])
 
   const [updateTitleError, updateTitle] = useDexieAction(
-    (params: { id: string; title: string }) =>
-      localDb.notes.update(params.id, {
+    async (params: { id: string; title: string }) =>
+      await localDb.notes.update(params.id, {
         title: params.title,
         updatedAt: new Date(),
       }),
   )
 
   const [starError, toggleStar] = useDexieAction(
-    (params: { id: string; starred: boolean }) =>
-      localDb.notes.update(params.id, {
+    async (params: { id: string; starred: boolean }) =>
+      await localDb.notes.update(params.id, {
         starred: !params.starred,
         updatedAt: new Date(),
       }),
   )
+
+  const handleUpdate = useDebouncedCallback(async (editor: EditorInstance) => {
+    if (!note) return
+    const jsonContent = editor.getJSON()
+    await localDb.notes.update(note.id, {
+      content: JSON.stringify(jsonContent),
+      updatedAt: new Date(),
+    })
+  }, 500)
+
+  useEffect(() => {
+    if (note) {
+      document.title = note.title
+    }
+  }, [note])
+
+  let initialContent = null
+  try {
+    if (note?.content) {
+      initialContent = JSON.parse(note.content)
+    }
+  } catch (e) {
+    console.error("Failed to parse note content:", e)
+  }
 
   return (
     <div className="flex h-screen flex-col">
@@ -59,7 +79,7 @@ export default function NoteLayout({
                   content: note.content,
                   starred: note.starred,
                 }}
-                onUpdateTitle={(id, newTitle) =>
+                onUpdateTitle={(id: string, newTitle: string) =>
                   updateTitle({ id, title: newTitle })
                 }
                 onToggleStar={() =>
@@ -71,6 +91,7 @@ export default function NoteLayout({
               {loading && <p>Loading note...</p>}
               {error && (
                 <p className="text-destructive">
+                  <pre>{JSON.stringify(params, null, 2)}</pre>
                   Error loading note: {error.message}
                 </p>
               )}
@@ -84,7 +105,14 @@ export default function NoteLayout({
                   Error toggling star: {starError.message}
                 </p>
               )}
-              {!loading && !error && children}
+              {!loading && !error && note && (
+                <div className="flex min-h-full w-full flex-col items-center gap-4 p-4 sm:px-5">
+                  <NovelEditor
+                    initialContent={initialContent}
+                    onUpdate={handleUpdate}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

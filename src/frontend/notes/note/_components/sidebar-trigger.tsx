@@ -1,11 +1,11 @@
 "use client"
 
 import React from "react"
+import { useSidebar } from "@/frontend/notes/note/_components/sidebar"
 import { PanelLeft } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { useSidebar } from "@/app/(notes)/notes/(note)/_components/sidebar"
 
 export const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,

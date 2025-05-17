@@ -1,8 +1,6 @@
-import Link from "next/link"
 import { Bookmark, Brush, List, NotebookPen, Play, Plus } from "lucide-react"
+import { NavLink as Link } from "react-router"
 
-import { getRandomDark } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -13,7 +11,7 @@ import {
 
 import { UserButton, WelcomeMessage } from "./user-indicator"
 
-export default async function Dashboard() {
+export default function Dashboard() {
   const iconSize = 24
 
   return (
@@ -26,7 +24,7 @@ export default async function Dashboard() {
         <WelcomeMessage />
 
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Link href="/dashboard" className="group block">
+          <Link to="/dashboard" className="group block">
             <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary hover:shadow-md">
               <CardHeader className="flex flex-row items-center gap-3 bg-gradient-to-br from-primary/80 to-primary px-6 py-4">
                 <div className="rounded-full bg-white/20 p-2">
@@ -42,7 +40,7 @@ export default async function Dashboard() {
             </Card>
           </Link>
 
-          <Link href="/notes" className="group block">
+          <Link to="/notes" className="group block">
             <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary hover:shadow-md">
               <CardHeader className="flex flex-row items-center gap-3 bg-gradient-to-br from-purple-700 to-indigo-600 px-6 py-4">
                 <div className="rounded-full bg-white/20 p-2">
@@ -58,7 +56,7 @@ export default async function Dashboard() {
             </Card>
           </Link>
 
-          <Link href="/dashboard" className="group block">
+          <Link to="/dashboard" className="group block">
             <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary hover:shadow-md">
               <CardHeader className="flex flex-row items-center gap-3 bg-gradient-to-br from-blue-700 to-cyan-600 px-6 py-4">
                 <div className="rounded-full bg-white/20 p-2">
@@ -74,7 +72,7 @@ export default async function Dashboard() {
             </Card>
           </Link>
 
-          <Link href="/dashboard" className="group block">
+          <Link to="/dashboard" className="group block">
             <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary hover:shadow-md">
               <CardHeader className="flex flex-row items-center gap-3 bg-gradient-to-br from-amber-600 to-orange-600 px-6 py-4">
                 <div className="rounded-full bg-white/20 p-2">
@@ -90,7 +88,7 @@ export default async function Dashboard() {
             </Card>
           </Link>
 
-          <Link href="/dashboard" className="group block">
+          <Link to="/dashboard" className="group block">
             <Card className="h-full overflow-hidden border-primary/10 transition-all duration-300 hover:border-primary hover:shadow-md">
               <CardHeader className="flex flex-row items-center gap-3 bg-gradient-to-br from-pink-600 to-rose-600 px-6 py-4">
                 <div className="rounded-full bg-white/20 p-2">
