@@ -25,19 +25,19 @@ export function UserButton() {
           <div className="flex items-center justify-start p-2">
             <div className="flex flex-col space-y-1 leading-none">
               <Typography variant="p" className="text-base">
-                {user?.username}
+                {user?.username || "Anonymous User"}
               </Typography>
               <Typography
                 variant="p"
                 className="truncate text-xs text-muted-foreground"
               >
-                {user?.email}
+                {user?.email || "No email provided"}
               </Typography>
             </div>
           </div>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="cursor-pointer focus:bg-red-900"
+            className="cursor-pointer text-destructive hover:bg-destructive/10 focus:bg-destructive/20"
             onSelect={async (e) => {
               e.preventDefault()
               // await logOut()
@@ -57,7 +57,7 @@ export function WelcomeMessage() {
   return (
     <div className="space-y-2">
       <Typography variant={"h3"} className="text-3xl font-bold text-primary">
-        Welcome, {user?.username}
+        Welcome, {user?.username || "Anon"}
       </Typography>
       <Typography variant={"p"} className="text-lg text-muted-foreground">
         What would you like to do today?

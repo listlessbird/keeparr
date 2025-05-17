@@ -11,7 +11,14 @@ export const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
+  const sidebar = useSidebar()
+
+  if (!sidebar) {
+    console.error("SidebarTrigger must be used within a SidebarProvider")
+    return null
+  }
+
+  const { toggleSidebar } = sidebar
 
   return (
     <Button

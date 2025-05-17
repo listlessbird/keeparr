@@ -25,6 +25,8 @@ const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 type SidebarContext = {
   state: "expanded" | "collapsed"
   toggleSidebar: () => void
+  open: boolean
+  setOpen: (open: boolean | ((prev: boolean) => boolean)) => void
   isMobile: boolean
   openMobile: boolean
   setOpenMobile: (open: boolean) => void
