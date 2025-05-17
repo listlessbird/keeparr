@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
+import { SidebarTrigger } from "@/frontend/notes/note/_components/sidebar-trigger"
 import {
   ArrowLeft,
   Clock,
@@ -15,7 +16,6 @@ import { NoteProps } from "@/types/note"
 import { cn, getRelativeTimeString } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { SidebarTrigger } from "@/app/(notes)/notes/(note)/_components/sidebar-trigger"
 
 export function NoteHeader({
   note,

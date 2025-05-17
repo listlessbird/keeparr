@@ -1,6 +1,8 @@
 "use client"
 
 import Link from "next/link"
+import { CreateNoteButton } from "@/frontend/notes/create-new-note-btn"
+import { Sidebar } from "@/frontend/notes/note/_components/sidebar"
 import {
   ChevronDown,
   Clock,
@@ -23,8 +25,6 @@ import {
 } from "@/components/ui/collapsible"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Sidebar } from "@/app/(notes)/notes/(note)/_components/sidebar"
-import { CreateNoteButton } from "@/app/(notes)/notes/create-new-note-btn"
 
 const tags = [
   { id: "1", name: "work", color: "bg-blue-500" },

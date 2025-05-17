@@ -11,6 +11,18 @@ const nextConfig = {
       },
     ],
   },
+  rewrites: async () => {
+    return [
+      {
+        source: "/((?!api/).*)",
+        destination: "/static-app-shell",
+      },
+      {
+        source: "/notes/:id",
+        destination: "/",
+      },
+    ]
+  },
   output: "standalone",
   experimental: {
     // typedRoutes: true,

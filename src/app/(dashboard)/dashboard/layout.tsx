@@ -3,7 +3,7 @@ import { MaxWidthWrapper } from "@/components/max-width-wrapper"
 
 import { DashboardProviders } from "./providers"
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
